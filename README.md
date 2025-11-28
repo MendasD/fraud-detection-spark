@@ -11,6 +11,8 @@ Ce projet est conçu pour reproduire un cas réel de travail d’un **Data Scien
 
 ## Structure du projet
 
+```markdown
+
 fraud-detection-spark/
 ├── data/
 │   ├── transactions/       # Données générées
@@ -41,6 +43,8 @@ fraud-detection-spark/
 ├── docker-compose.yml                  # Kafka + Zookeeper
 ├── requirements.txt
 └── README.md
+
+```
 
 ---
 

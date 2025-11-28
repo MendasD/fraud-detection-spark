@@ -1,7 +1,3 @@
-
----
-
-````markdown
 # Fraud Detection with PySpark & Kafka (Big Data Project)
 
 ## Présentation
@@ -59,7 +55,7 @@ Vérification de la version :
 
 ```bash
 python --version
-````
+```
 
 ---
 
@@ -141,5 +137,3 @@ Ce projet montre concrètement :
 * L’architecture Kafka + Spark
 * La détection automatique de fraude financière
 * Une architecture proche du monde professionnel
-
----

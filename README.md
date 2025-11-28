@@ -29,10 +29,11 @@ fraud-detection-spark/
 │   ├── streaming/
 │   │   └── fraud_detector.py           # Spark Streaming consumer
 │   ├── models/
+|   |   ├── transactions.py              # Modèle de données, méthodes de sérialisation JSON
 │   │   ├── train_model.py              # Entraînement ML
 │   │   └── feature_engineering.py      # Features pour détection
 │   ├── utils/
-|    |   ├── logger.py                  # Configuration du système de logging
+|   |   ├── logger.py                  # Configuration du système de logging
 │   │   ├── kafka_utils.py
 │   │   └── spark_utils.py
 │   └── dashboard/

@@ -1,6 +1,8 @@
 # Core Dependencies
+dotenv==0.9.9
 pyspark==3.5.0
-kafka-python==2.0.2
+#kafka-python-ng==2.2.2  # Compatible avec Python 3.10+
+confluent-kafka==2.3.0
 python-dotenv==1.0.0
 
 # Data Processing & ML
@@ -23,5 +25,5 @@ jupyter==1.0.0
 notebook==7.0.6
 pytest==7.4.3
 
-# Monitoring 
+# Monitoring (optionnel)
 prometheus-client==0.19.0

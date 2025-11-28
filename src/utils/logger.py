@@ -35,7 +35,7 @@ def setup_logger(name: str) -> logging.Logger:
     
     # Format des logs : timestamp - module - niveau - message
     formatter = logging.Formatter(
-        '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        '[%(asctime)s - %(name)s] - %(levelname)s - %(message)s',
         datefmt='%Y-%m-%d %H:%M:%S'
     )
     
@@ -67,4 +67,7 @@ if __name__ == "__main__":
     test_logger.info("Message d'information")
     test_logger.warning("Message d'avertissement")
     test_logger.error("Message d'erreur")
-    print(f"\nLogs sauvegardés dans: {os.getenv('LOG_PATH')}")
+
+    # logging path
+    log_path = Path(os.getenv('LOG_PATH', './logs/app.log')).resolve()
+    print(f"\nLogs sauvegardés dans: {log_path})")

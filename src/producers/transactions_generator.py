@@ -208,7 +208,7 @@ class TransactionGenerator:
             location_lon=round(location_lon, 6),
             device_id=device_id,
             is_online=random.random() < 0.5,
-            is_fraud=1,  # FRAUDE!
+            is_fraud=1,  # FRAUDE
             card_last_4=profile['card_last_4'],
             cvv_provided=random.random() < 0.3  # Souvent pas de CVV en fraude
         )
@@ -281,14 +281,14 @@ class TransactionGenerator:
                     'transaction_id': transaction.transaction_id,
                     'user_id': transaction.user_id,
                     'timestamp': transaction.timestamp,
-                    'amount': transaction.amount,
+                    'amount': float(transaction.amount),
                     'merchant_id': transaction.merchant_id,
                     'merchant_category': transaction.merchant_category,
-                    'location_lat': transaction.location_lat,
-                    'location_lon': transaction.location_lon,
+                    'location_lat': float(transaction.location_lat),
+                    'location_lon': float(transaction.location_lon),
                     'device_id': transaction.device_id,
-                    'is_online': transaction.is_online,
-                    'is_fraud': transaction.is_fraud,
+                    'is_online': bool(transaction.is_online),
+                    'is_fraud': int(transaction.is_fraud),
                     'card_last_4': transaction.card_last_4,
                     'cvv_provided': transaction.cvv_provided,
                 }

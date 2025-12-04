@@ -117,7 +117,6 @@ def create_kafka_topic(
         logger.error(f"Erreur lors de la création du topic: {e}")
         return False
 
-
 def send_message(
     producer: KafkaProducer,
     topic: str,

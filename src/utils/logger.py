@@ -7,9 +7,16 @@ import logging
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+import sys
 
 # Charger les variables d'environnement
 load_dotenv()
+
+logging.basicConfig(
+    level=logging.INFO,
+    handlers=[logging.StreamHandler(sys.stdout)],
+    encoding="utf-8"
+)
 
 def setup_logger(name: str) -> logging.Logger:
     """

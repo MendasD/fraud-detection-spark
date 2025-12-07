@@ -10,7 +10,7 @@ cls
 echo.
 echo ╔════════════════════════════════════════════════════════════╗
 echo ║                                                            ║
-echo ║         FRAUD DETECTION - GUIDE DE DEMARRAGE              ║
+echo ║         FRAUD DETECTION - GUIDE DE DEMARRAGE               ║
 echo ║                                                            ║
 echo ╚════════════════════════════════════════════════════════════╝
 echo.

@@ -1,6 +1,7 @@
 """
 Détecteur de fraudes en temps réel avec Spark Streaming.
 Consomme les transactions depuis Kafka, calcule les features, et détecte les fraudes.
+Ici, les fraudes sont détectées sur la bases de simples règles définies.
 """
 
 import os

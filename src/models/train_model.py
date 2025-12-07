@@ -10,7 +10,7 @@ from pathlib import Path
 from datetime import datetime
 
 # Configuration HADOOP pour Windows (AVANT les imports PySpark)
-hadoop_home = os.getenv('HADOOP_HOME', 'C:/hadoop')
+hadoop_home = os.getenv('HADOOP_HOME')
 if Path(hadoop_home).exists():
     os.environ['HADOOP_HOME'] = hadoop_home
     bin_path = os.path.join(hadoop_home, 'bin')

@@ -14,6 +14,10 @@ from datetime import datetime, timedelta
 import logging
 import os
 import sys
+from dotenv import load_dotenv
+
+# Charger les variables d'environnement
+load_dotenv()
 
 # Configuration du logging
 logging.basicConfig(level=logging.INFO)
@@ -23,7 +27,8 @@ logger = logging.getLogger(__name__)
 python_path = sys.executable
 os.environ["PYSPARK_PYTHON"] = os.getenv('PYSPARK_PYTHON', python_path)
 os.environ["PYSPARK_DRIVER_PYTHON"] = os.getenv('PYSPARK_PYTHON', python_path)
-os.environ["JAVA_HOME"] = r"C:\Program Files\Eclipse Adoptium\jdk-21.0.6.7-hotspot" # Java 17 compatible pour spark 3.5.x
+os.environ["JAVA_HOME"] = os.getenv('JAVA_HOME')
+#os.environ["JAVA_HOME"] = r"C:\Program Files\Eclipse Adoptium\jdk-21.0.6.7-hotspot" # Java 17 compatible pour spark 3.5.x
 
 # Configurer HADOOP_HOME pour Windows si défini dans .env
 hadoop_home = os.getenv('HADOOP_HOME')
@@ -53,7 +58,7 @@ class FraudDashboard:
     
     def __init__(self):
         """Initialise le dashboard"""
-        logger.info("🚀 Initialisation du dashboard")
+        logger.info("** Initialisation du dashboard")
         
         # Connexion à Spark
         self.spark = self._get_spark_session()
@@ -68,7 +73,7 @@ class FraudDashboard:
         # Callbacks
         self._setup_callbacks()
         
-        logger.info("✅ Dashboard initialisé")
+        logger.info("*** Dashboard initialisé")
     
     def _get_spark_session(self):
         """Récupère ou crée la session Spark"""
@@ -80,11 +85,11 @@ class FraudDashboard:
                 .getOrCreate()
             
             spark.sparkContext.setLogLevel("ERROR")
-            logger.info(f"✅ Connecté à Spark {spark.version}")
+            logger.info(f"*** Connecté à Spark {spark.version}")
             return spark
             
         except Exception as e:
-            logger.error(f"❌ Erreur Spark: {e}")
+            logger.error(f"!!! Erreur Spark: {e}")
             raise
     
     def _create_layout(self):
@@ -92,7 +97,7 @@ class FraudDashboard:
         return html.Div([
             # En-tête
             html.Div([
-                html.H1("🛡️ Fraud Detection - Real-Time ML Dashboard", 
+                html.H1(" Fraud Detection - Real-Time ML Dashboard", 
                        style={'color': COLORS['primary'], 'textAlign': 'center'}),
                 html.P("Détection de fraudes en temps réel avec Machine Learning",
                       style={'color': COLORS['text'], 'textAlign': 'center', 'fontSize': 18})
@@ -159,7 +164,7 @@ class FraudDashboard:
             #pdf = df.toPandas()
             
             # if len(pdf) == 0:
-            #     logger.warning("⚠️ Aucune donnée disponible")
+            #     logger.warning("!!* Aucune donnée disponible")
             #     return None
             
             # Convertir timestamp
@@ -170,7 +175,7 @@ class FraudDashboard:
             df = self.spark.sql("SELECT * FROM fraud_detection_ml")
             pdf = df.toPandas()
             if len(pdf) == 0:
-                logger.warning("⚠️ Aucune donnée disponible")
+                logger.warning("!!* Aucune donnée disponible")
                 return None
             pdf['timestamp'] = pd.to_datetime(pdf['timestamp'])
             
@@ -211,7 +216,7 @@ class FraudDashboard:
                 )
                 
                 no_data_msg = html.Div([
-                    html.H3("⏳ En attente de données...", 
+                    html.H3(":: En attente de données...", 
                            style={'color': COLORS['warning'], 'textAlign': 'center'}),
                     html.P("Vérifiez que le détecteur ML est lancé et que des transactions arrivent.",
                           style={'color': COLORS['text'], 'textAlign': 'center'})
@@ -264,28 +269,28 @@ class FraudDashboard:
         
         cards = html.Div([
             # Carte 1: Total transactions
-            self._create_kpi_card("📊 Total Transactions", f"{total:,}", COLORS['primary']),
+            self._create_kpi_card(" Total Transactions", f"{total:,}", COLORS['primary']),
             
             # Carte 2: Fraudes détectées
-            self._create_kpi_card("🚨 Fraudes Détectées", f"{frauds_detected:,} ({fraud_rate:.1f}%)", COLORS['danger']),
+            self._create_kpi_card(" Fraudes Détectées", f"{frauds_detected:,} ({fraud_rate:.1f}%)", COLORS['danger']),
             
             # Carte 3: Score moyen
-            self._create_kpi_card("📈 Score Fraude Moyen", f"{avg_score:.1f}/100", COLORS['warning']),
+            self._create_kpi_card(" Score Fraude Moyen", f"{avg_score:.1f}/100", COLORS['warning']),
             
             # Carte 4: Montant total
-            self._create_kpi_card("💰 Montant Total", f"${total_amount:,.2f}", COLORS['success']),
+            self._create_kpi_card(" Montant Total", f"${total_amount:,.2f}", COLORS['success']),
             
             # Carte 5: Montant frauduleux
-            self._create_kpi_card("💸 Montant Frauduleux", f"${fraud_amount:,.2f}", COLORS['danger']),
+            self._create_kpi_card(" Montant Frauduleux", f"${fraud_amount:,.2f}", COLORS['danger']),
             
             # Carte 6: Accuracy
-            self._create_kpi_card("🎯 Précision Modèle", f"{accuracy:.1f}%", COLORS['success']),
+            self._create_kpi_card(" Précision Modèle", f"{accuracy:.1f}%", COLORS['success']),
             
             # Carte 7: Precision
-            self._create_kpi_card("🔍 Précision ML", f"{precision:.1f}%", COLORS['primary']),
+            self._create_kpi_card(" Précision ML", f"{precision:.1f}%", COLORS['primary']),
             
             # Carte 8: Recall
-            self._create_kpi_card("📡 Rappel ML", f"{recall:.1f}%", COLORS['primary']),
+            self._create_kpi_card(" Rappel ML", f"{recall:.1f}%", COLORS['primary']),
             
         ], style={'display': 'flex', 'flexWrap': 'wrap', 'justifyContent': 'space-around', 'marginBottom': '20px'})
         
@@ -337,7 +342,7 @@ class FraudDashboard:
         ))
         
         fig.update_layout(
-            title='📊 Transactions au Fil du Temps',
+            title=' Transactions au Fil du Temps',
             xaxis_title='Temps',
             yaxis_title='Nombre de transactions',
             template='plotly_dark',
@@ -369,7 +374,7 @@ class FraudDashboard:
                      annotation_text="HIGH", annotation_position="top")
         
         fig.update_layout(
-            title='📈 Distribution des Scores de Fraude',
+            title=' Distribution des Scores de Fraude',
             xaxis_title='Score de Fraude',
             yaxis_title='Nombre de transactions',
             template='plotly_dark',
@@ -395,7 +400,7 @@ class FraudDashboard:
         )
         
         fig.update_layout(
-            title='🏪 Fraudes par Catégorie de Marchand',
+            title=' Fraudes par Catégorie de Marchand',
             xaxis_title='Catégorie',
             yaxis_title='Nombre de transactions',
             template='plotly_dark',
@@ -424,7 +429,7 @@ class FraudDashboard:
         
         fig.update_layout(
             mapbox_style="carto-darkmatter",
-            title='🗺️ Localisation des Fraudes Détectées',
+            title=' Localisation des Fraudes Détectées',
             template='plotly_dark',
             paper_bgcolor=COLORS['card'],
             font_color=COLORS['text']
@@ -454,7 +459,7 @@ class FraudDashboard:
         ))
         
         fig.update_layout(
-            title='🎯 Matrice de Confusion du Modèle ML',
+            title=' Matrice de Confusion du Modèle ML',
             template='plotly_dark',
             paper_bgcolor=COLORS['card'],
             plot_bgcolor=COLORS['card'],
@@ -485,7 +490,7 @@ class FraudDashboard:
                 html.Td(row['merchant_category'], style={'color': COLORS['text']}),
                 html.Td(f"{row['fraud_score']:.1f}", style={'color': COLORS['text']}),
                 html.Td(row['risk_level'], style={'color': risk_color, 'fontWeight': 'bold'}),
-                html.Td('🚨' if row['predicted_fraud'] == 1.0 else '✅', 
+                html.Td('🚨' if row['predicted_fraud'] == 1.0 else '***', 
                        style={'fontSize': 20, 'textAlign': 'center'})
             ]))
         
@@ -518,7 +523,7 @@ class FraudDashboard:
     
     def run(self, debug=True, port=8050):
         """Lance le dashboard"""
-        logger.info(f"🚀 Démarrage du dashboard sur http://localhost:{port}")
+        logger.info(f"** Démarrage du dashboard sur http://localhost:{port}")
         self.app.run(debug=debug, port=port, host='0.0.0.0')
 
 

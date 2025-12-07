@@ -1,0 +1,1853 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation Technique - Système de Détection de Fraudes en temps réel (Spark)</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 2.5cm;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+        }
+        
+        h1 {
+            color: #1a1a1a;
+            border-bottom: 3px solid #0066cc;
+            padding-bottom: 10px;
+            margin-top: 40px;
+            page-break-before: always;
+        }
+        
+        h1:first-of-type {
+            page-break-before: avoid;
+        }
+        
+        h2 {
+            color: #333;
+            margin-top: 30px;
+            padding-left: 10px;
+            border-left: 4px solid #0066cc;
+        }
+        
+        h3 {
+            color: #555;
+            margin-top: 20px;
+        }
+        
+        .cover {
+            text-align: center;
+            padding: 150px 20px;
+            page-break-after: always;
+        }
+        
+        .cover h1 {
+            font-size: 36px;
+            border: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .cover .subtitle {
+            font-size: 20px;
+            color: #666;
+            margin: 20px 0 80px 0;
+        }
+        
+        .cover .info {
+            font-size: 16px;
+            color: #888;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #f5f5f5;
+            font-weight: 600;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+        
+        .info-box {
+            background: #f8f9fa;
+            border-left: 4px solid #0066cc;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .warning-box {
+            background: #fff8e1;
+            border-left: 4px solid #ffa000;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+        
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+        
+        .toc {
+            page-break-after: always;
+        }
+        
+        .toc ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .toc li {
+            margin: 8px 0;
+            padding: 5px 0;
+        }
+        
+        .toc a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+        
+        .reference-link {
+            color: #0066cc;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .reference-link:hover {
+            text-decoration: underline;
+        }
+        
+        ul {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+        
+        li {
+            margin: 5px 0;
+        }
+
+        .author {
+            margin-top: 40px;
+            padding: 16px 20px;
+            background-color: #f5f7fa;
+            border-left: 4px solid #2c3e50;
+            border-radius: 6px;
+            font-family: "Segoe UI", Roboto, Arial, sans-serif;
+        }
+
+        .author-label {
+            display: block;
+            font-weight: 600;
+            font-size: 15px;
+            color: #2c3e50;
+            margin-bottom: 6px;
+        }
+
+        .author-list {
+            margin: 0;
+            padding-left: 18px;
+            list-style-type: "— ";
+            color: #555;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .author-list li {
+            margin-bottom: 2px;
+        }
+
+        
+        @media print {
+            body {
+                font-size: 11pt;
+            }
+            
+            .page-break {
+                page-break-before: always;
+            }
+            
+            a {
+                color: #0066cc;
+                text-decoration: none;
+            }
+            
+            a::after {
+                content: " (" attr(href) ")";
+                font-size: 9pt;
+                color: #666;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- PAGE DE COUVERTURE -->
+<div class="cover">
+    <h1>DOCUMENTATION TECHNIQUE</h1>
+    <div class="subtitle">
+        Système de Détection de Fraudes Bancaires en Temps Réel<br>
+        avec Apache Spark Streaming et Machine Learning
+    </div>
+    <div class="info">
+        <p><strong>Projet de Big Data (AS3 / 2025-2026)</strong></p>
+        <p>Ecole Nationale de la Statistique et de l'Analyse Economique Pierre NDIAYE</p>
+        <p>Décembre 2025</p>
+        <p style="margin-top: 50px; font-size: 14px;">Version 1.0</p>
+    </div>
+    <br/>
+   <div class="author">
+    <span class="author-label">Rédigé par :</span>
+    <ol class="author-list" style="display: flex; flex-direction: row; gap: 3rem; justify-content: center;">
+        <div>
+            <li>David Christ MEKONTCHOU NZONDE</li>
+            <li>Saer NDAO</li>
+        </div>
+        <div>
+            <li>Armand NDOASNAN</li>
+            <li>Gilbert OUMSAORE</li>
+        </div>
+    </ol>
+</div>
+
+</div>
+
+<!-- TABLE DES MATIÈRES -->
+<div class="toc">
+    <h1>TABLE DES MATIÈRES</h1>
+    
+    <h2>1. INTRODUCTION</h2>
+    <ul>
+        <li>1.1 Contexte du projet</li>
+        <li>1.2 Architecture globale</li>
+        <li>1.3 Objectifs de la documentation</li>
+    </ul>
+    
+    <h2>2. SERVICES ET TECHNOLOGIES EXTERNES</h2>
+    <ul>
+        <li>2.1 Docker et Docker Compose</li>
+        <li>2.2 Apache Kafka</li>
+        <li>2.3 Apache Zookeeper</li>
+        <li>2.4 Apache Spark</li>
+        <li>2.5 Python et bibliothèques tierces</li>
+        <li>2.6 Winutils (Windows)</li>
+        <li>2.7 Java </li>
+    </ul>
+    
+    <h2>3. DÉPENDANCES PYTHON</h2>
+    <ul>
+        <li>3.1 PySpark</li>
+        <li>3.2 Kafka-Python</li>
+        <li>3.3 Dash et Plotly</li>
+        <li>3.4 Pandas et NumPy</li>
+        <li>3.5 Autres dépendances</li>
+    </ul>
+    
+    <h2>4. CONFIGURATION DE L'ENVIRONNEMENT</h2>
+    <ul>
+        <li>4.1 Structure du projet</li>
+        <li>4.2 Variables d'environnement</li>
+        <li>4.3 Docker Compose</li>
+    </ul>
+    
+    <h2>5. RÉFÉRENCES</h2>
+    <ul>
+        <li>5.1 Documentation officielle</li>
+        <li>5.2 Ressources complémentaires</li>
+    </ul>
+</div>
+
+<!-- CONTENU PRINCIPAL -->
+<h1>1. INTRODUCTION</h1>
+
+<h2>1.1 Contexte du projet</h2>
+
+<p>Ce projet implémente un système de détection de fraudes bancaires en temps réel utilisant Apache Spark Streaming et des techniques de Machine Learning. Le système analyse des flux de transactions financières et identifie les comportements frauduleux avec une latence inférieure à une seconde.</p>
+
+<h3>Caractéristiques principales</h3>
+
+<table>
+    <tr>
+        <th>Caractéristique</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>Débit de traitement</td>
+        <td>Plus de 100 transactions par seconde</td>
+    </tr>
+    <tr>
+        <td>Latence end-to-end</td>
+        <td>Moins de 1 seconde</td>
+    </tr>
+    <tr>
+        <td>Précision du modèle ML</td>
+        <td>92% (Random Forest)</td>
+    </tr>
+    <tr>
+        <td>Visualisation</td>
+        <td>Dashboard temps réel avec rafraîchissement automatique</td>
+    </tr>
+</table>
+
+<h2>1.2 Architecture globale</h2>
+
+<p>Le système s'articule autour de quatre composants principaux :</p>
+
+<div class="info-box">
+    <ol>
+        <li><strong>Producteur de transactions</strong> : Génère des transactions bancaires simulées (légitimes et frauduleuses)</li>
+        <li><strong>Apache Kafka</strong> : Assure le transport et le buffering des messages entre les composants</li>
+        <li><strong>Spark Streaming</strong> : Traite les transactions en temps réel et applique le modèle de Machine Learning</li>
+        <li><strong>Dashboard Dash</strong> : Visualise les résultats de détection en temps réel</li>
+    </ol>
+</div>
+
+<pre>
+┌──────────────────┐      ┌─────────────┐      ┌────────────────────┐
+│   Producteur     │─────▶│   Kafka     │─────▶│ Spark Streaming    │
+│  Transactions    │      │  (Topic)    │      │   + Modèle ML      │
+└──────────────────┘      └─────────────┘      └─────────┬──────────┘
+                                │                         │
+                                │                         ▼
+                          ┌─────▼─────┐          ┌─────────────────┐
+                          │ Zookeeper │          │   Dashboard     │
+                          └───────────┘          │   Dash/Plotly   │
+                                                 └─────────────────┘
+</pre>
+
+<h2>1.3 Objectifs de la documentation</h2>
+
+<p>Cette documentation vise à :</p>
+
+<ul>
+    <li>Présenter les services externes utilisés et leur rôle dans le projet</li>
+    <li>Fournir les références vers les documentations officielles</li>
+    <li>Expliquer les choix technologiques effectués</li>
+    <li>Documenter la configuration nécessaire à la reproduction du projet</li>
+</ul>
+
+<div class="page-break"></div>
+
+<h1>2. SERVICES ET TECHNOLOGIES EXTERNES</h1>
+
+<h2>2.1 Docker et Docker Compose</h2>
+
+<h3>Description</h3>
+
+<p>Docker est une plateforme de conteneurisation qui permet d'exécuter des applications dans des environnements isolés appelés conteneurs. Docker Compose est un outil permettant de définir et d'exécuter des applications multi-conteneurs.</p>
+
+<h3>Rôle dans le projet</h3>
+
+<p>Docker est utilisé pour conteneuriser et orchestrer les services Kafka et Zookeeper. Cette approche présente plusieurs avantages :</p>
+
+<ul>
+    <li>Isolation complète des services par rapport au système hôte</li>
+    <li>Reproductibilité garantie de l'environnement d'exécution</li>
+    <li>Démarrage et arrêt simplifiés de l'infrastructure</li>
+    <li>Pas de conflit avec d'autres services installés localement</li>
+</ul>
+
+<h3>Version utilisée</h3>
+
+<table>
+    <tr>
+        <th>Composant</th>
+        <th>Version</th>
+    </tr>
+    <tr>
+        <td>Docker Engine</td>
+        <td>24.0+</td>
+    </tr>
+    <tr>
+        <td>Docker Compose</td>
+        <td>2.20+</td>
+    </tr>
+</table>
+
+<h3>Documentation officielle</h3>
+
+<ul>
+    <li>Site officiel : <a href="https://www.docker.com" class="reference-link">https://www.docker.com</a></li>
+    <li>Docker Desktop : <a href="https://docs.docker.com/desktop/" class="reference-link">https://docs.docker.com/desktop/</a></li>
+    <li>Docker Compose : <a href="https://docs.docker.com/compose/" class="reference-link">https://docs.docker.com/compose/</a></li>
+    <li>Installation : <a href="https://docs.docker.com/get-docker/" class="reference-link">https://docs.docker.com/get-docker/</a></li>
+</ul>
+
+<div class="warning-box">
+    <strong>Note pour Windows :</strong> Docker Desktop nécessite WSL2 (Windows Subsystem for Linux 2). La documentation d'installation de WSL2 est disponible sur <a href="https://docs.microsoft.com/windows/wsl/install" class="reference-link">https://docs.microsoft.com/windows/wsl/install</a>
+</div>
+
+<h3>Licence</h3>
+
+<p>Docker est disponible sous licence Apache 2.0 pour l'édition Community.</p>
+
+<div class="page-break"></div>
+
+<h2>2.2 Apache Kafka</h2>
+
+<h3>Description</h3>
+
+<p>Apache Kafka est une plateforme de streaming distribuée open-source développée par la Apache Software Foundation. Elle permet de publier, stocker et traiter des flux d'enregistrements en temps réel.</p>
+
+<h3>Rôle dans le projet</h3>
+
+<p>Kafka joue le rôle de message broker dans l'architecture. Il assure :</p>
+
+<ul>
+    <li><strong>Transport des messages</strong> : Les transactions générées par le producteur sont publiées dans un topic Kafka</li>
+    <li><strong>Découplage</strong> : Le producteur et le consommateur (Spark) peuvent fonctionner de manière indépendante</li>
+    <li><strong>Buffering</strong> : Les messages sont conservés même si le consommateur est temporairement indisponible</li>
+    <li><strong>Scalabilité</strong> : Kafka peut gérer des millions de messages par seconde grâce à son architecture distribuée</li>
+</ul>
+
+<h3>Concepts clés utilisés</h3>
+
+<table>
+    <tr>
+        <th>Concept</th>
+        <th>Description</th>
+        <th>Utilisation dans le projet</th>
+    </tr>
+    <tr>
+        <td>Topic</td>
+        <td>Catégorie dans laquelle les messages sont publiés</td>
+        <td>Topic "transactions" contenant les transactions bancaires</td>
+    </tr>
+    <tr>
+        <td>Producer</td>
+        <td>Application qui publie des messages dans Kafka</td>
+        <td>Script Python transaction_producer.py</td>
+    </tr>
+    <tr>
+        <td>Consumer</td>
+        <td>Application qui lit les messages depuis Kafka</td>
+        <td>Spark Streaming (ml_fraud_detector.py)</td>
+    </tr>
+    <tr>
+        <td>Broker</td>
+        <td>Serveur Kafka qui stocke et distribue les messages</td>
+        <td>Un seul broker en mode développement</td>
+    </tr>
+    <tr>
+        <td>Offset</td>
+        <td>Position d'un message dans une partition</td>
+        <td>Géré automatiquement par Spark</td>
+    </tr>
+</table>
+
+<h3>Version utilisée</h3>
+
+<p>Kafka version 3.5+ (image Docker <code>confluentinc/cp-kafka</code>)</p>
+
+<h3>Configuration dans le projet</h3>
+
+<pre>
+Bootstrap servers : localhost:9092
+Topic             : transactions
+Partitions        : 1 (suffisant pour développement)
+Replication factor: 1 (pas de réplication en mode local)
+</pre>
+
+<h3>Documentation officielle</h3>
+
+<ul>
+    <li>Site officiel : <a href="https://kafka.apache.org" class="reference-link">https://kafka.apache.org</a></li>
+    <li>Documentation : <a href="https://kafka.apache.org/documentation/" class="reference-link">https://kafka.apache.org/documentation/</a></li>
+    <li>Quickstart : <a href="https://kafka.apache.org/quickstart" class="reference-link">https://kafka.apache.org/quickstart</a></li>
+    <li>Docker image : <a href="https://hub.docker.com/r/confluentinc/cp-kafka" class="reference-link">https://hub.docker.com/r/confluentinc/cp-kafka</a></li>
+</ul>
+
+<h3>Licence</h3>
+
+<p>Apache License 2.0</p>
+
+<div class="page-break"></div>
+
+<h2>2.3 Apache Zookeeper</h2>
+
+<h3>Description</h3>
+
+<p>Apache Zookeeper est un service de coordination distribué pour applications distribuées. Il fournit des services de synchronisation, de configuration et de nommage.</p>
+
+<h3>Rôle dans le projet</h3>
+
+<p>Zookeeper est utilisé par Kafka pour gérer la coordination du cluster et maintenir les métadonnées. Ses responsabilités incluent :</p>
+
+<ul>
+    <li>Gestion de la configuration du cluster Kafka</li>
+    <li>Élection du contrôleur (controller) parmi les brokers</li>
+    <li>Maintien de la liste des brokers actifs</li>
+    <li>Gestion des métadonnées des topics et partitions</li>
+</ul>
+
+<div class="info-box">
+    <strong>Note importante :</strong> À partir de Kafka 3.3+, Zookeeper est progressivement remplacé par KRaft (Kafka Raft). Cependant, Zookeeper reste la solution la plus stable et documentée pour les environnements de développement.
+</div>
+
+<h3>Version utilisée</h3>
+
+<p>Zookeeper version 3.8+ (image Docker <code>confluentinc/cp-zookeeper</code>)</p>
+
+<h3>Configuration dans le projet</h3>
+
+<pre>
+Port              : 2181
+Client connections: localhost:2181
+Tick time         : 2000ms
+</pre>
+
+<h3>Documentation officielle</h3>
+
+<ul>
+    <li>Site officiel : <a href="https://zookeeper.apache.org" class="reference-link">https://zookeeper.apache.org</a></li>
+    <li>Documentation : <a href="https://zookeeper.apache.org/documentation.html" class="reference-link">https://zookeeper.apache.org/documentation.html</a></li>
+    <li>Docker image : <a href="https://hub.docker.com/r/confluentinc/cp-zookeeper" class="reference-link">https://hub.docker.com/r/confluentinc/cp-zookeeper</a></li>
+</ul>
+
+<h3>Licence</h3>
+
+<p>Apache License 2.0</p>
+
+<div class="page-break"></div>
+
+<h2>2.4 Apache Spark</h2>
+
+<h3>Description</h3>
+
+<p>Apache Spark est un moteur de traitement de données distribué open-source, conçu pour le traitement rapide de grandes quantités de données. Il fournit des APIs de haut niveau en Java, Scala, Python et R.</p>
+
+<h3>Rôle dans le projet</h3>
+
+<p>Spark est le cœur du système de traitement. Il est utilisé pour :</p>
+
+<ul>
+    <li><strong>Spark Streaming</strong> : Lecture et traitement continu des transactions depuis Kafka</li>
+    <li><strong>Spark SQL</strong> : Manipulation des données avec des opérations de type SQL (filtrage, agrégation, jointures)</li>
+    <li><strong>Spark MLlib</strong> : Application du modèle de Machine Learning (Random Forest) pour la détection de fraudes</li>
+</ul>
+
+<h3>Composants utilisés</h3>
+
+<table>
+    <tr>
+        <th>Composant</th>
+        <th>Description</th>
+        <th>Utilisation</th>
+    </tr>
+    <tr>
+        <td>Spark Core</td>
+        <td>Moteur de base pour le traitement distribué</td>
+        <td>Gestion de la distribution et de l'exécution</td>
+    </tr>
+    <tr>
+        <td>Spark Structured Streaming</td>
+        <td>API de streaming basée sur DataFrames</td>
+        <td>Traitement des flux de transactions</td>
+    </tr>
+    <tr>
+        <td>Spark MLlib</td>
+        <td>Bibliothèque de Machine Learning</td>
+        <td>Random Forest pour classification de fraudes</td>
+    </tr>
+    <tr>
+        <td>Spark SQL</td>
+        <td>Module pour données structurées</td>
+        <td>Transformations et agrégations</td>
+    </tr>
+</table>
+
+<h3>Version utilisée</h3>
+
+<p>Apache Spark 3.5.3 (via PySpark)</p>
+
+<h3>Configuration clé</h3>
+
+<pre>
+Master mode       : local[*] (utilise tous les cœurs disponibles)
+Driver memory     : 2g
+Executor memory   : 2g
+Shuffle partitions: 4 (optimisé pour développement local)
+</pre>
+
+<h3>Documentation officielle</h3>
+
+<ul>
+    <li>Site officiel : <a href="https://spark.apache.org" class="reference-link">https://spark.apache.org</a></li>
+    <li>Documentation : <a href="https://spark.apache.org/docs/latest/" class="reference-link">https://spark.apache.org/docs/latest/</a></li>
+    <li>Structured Streaming : <a href="https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html" class="reference-link">https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html</a></li>
+    <li>MLlib : <a href="https://spark.apache.org/docs/latest/ml-guide.html" class="reference-link">https://spark.apache.org/docs/latest/ml-guide.html</a></li>
+    <li>PySpark API : <a href="https://spark.apache.org/docs/latest/api/python/" class="reference-link">https://spark.apache.org/docs/latest/api/python/</a></li>
+</ul>
+
+<h3>Licence</h3>
+
+<p>Apache License 2.0</p>
+
+<div class="page-break"></div>
+
+<h2>2.5 Python et bibliothèques tierces</h2>
+
+<h3>Python</h3>
+
+<p>Langage de programmation principal du projet. Version requise : 3.10 ou 3.11.</p>
+
+<ul>
+    <li>Site officiel : <a href="https://www.python.org" class="reference-link">https://www.python.org</a></li>
+    <li>Documentation : <a href="https://docs.python.org/3/" class="reference-link">https://docs.python.org/3/</a></li>
+    <li>Téléchargement : <a href="https://www.python.org/downloads/" class="reference-link">https://www.python.org/downloads/</a></li>
+</ul>
+
+<h3>Bibliothèques tierces principales</h3>
+
+<table>
+    <tr>
+        <th>Bibliothèque</th>
+        <th>Version</th>
+        <th>Rôle</th>
+        <th>Documentation</th>
+    </tr>
+    <tr>
+        <td>kafka-python</td>
+        <td>2.0.2</td>
+        <td>Client Python pour interagir avec Kafka</td>
+        <td><a href="https://kafka-python.readthedocs.io/" class="reference-link">kafka-python.readthedocs.io</a></td>
+    </tr>
+    <tr>
+        <td>Dash</td>
+        <td>2.14.2</td>
+        <td>Framework pour applications web analytiques</td>
+        <td><a href="https://dash.plotly.com/" class="reference-link">dash.plotly.com</a></td>
+    </tr>
+    <tr>
+        <td>Plotly</td>
+        <td>5.18.0</td>
+        <td>Bibliothèque de visualisation interactive</td>
+        <td><a href="https://plotly.com/python/" class="reference-link">plotly.com/python</a></td>
+    </tr>
+    <tr>
+        <td>Pandas</td>
+        <td>2.1.4</td>
+        <td>Manipulation et analyse de données</td>
+        <td><a href="https://pandas.pydata.org/" class="reference-link">pandas.pydata.org</a></td>
+    </tr>
+    <tr>
+        <td>NumPy</td>
+        <td>1.26.2</td>
+        <td>Calcul numérique</td>
+        <td><a href="https://numpy.org/" class="reference-link">numpy.org</a></td>
+    </tr>
+</table>
+
+<div class="page-break"></div>
+
+<h2>2.6 Winutils (Windows uniquement)</h2>
+
+<h3>Description</h3>
+
+<p>Winutils est un ensemble d'utilitaires binaires Hadoop nécessaires pour exécuter Spark sur Windows. Ces utilitaires incluent <code>winutils.exe</code> et <code>hadoop.dll</code>.</p>
+
+<h3>Rôle dans le projet</h3>
+
+<p>Sur Windows, PySpark nécessite ces utilitaires pour :</p>
+
+<ul>
+    <li>Gérer les permissions de fichiers HDFS (même en mode local)</li>
+    <li>Exécuter les opérations de checkpointing</li>
+    <li>Éviter les erreurs de type "NullPointerException" au démarrage</li>
+</ul>
+
+<div class="warning-box">
+    <strong>Important :</strong> Winutils n'est nécessaire que sur Windows. Les utilisateurs macOS et Linux n'ont pas besoin de cette dépendance.
+</div>
+
+<h3>Version requise</h3>
+
+<p>hadoop-3.3.5 (compatible avec Spark 3.5.x)</p>
+
+<h3>Installation</h3>
+
+<ol>
+    <li>Télécharger <code>winutils.exe</code> depuis le dépôt GitHub</li>
+    <li>Créer un dossier <code>C:\hadoop\bin</code></li>
+    <li>Copier <code>winutils.exe</code> dans ce dossier</li>
+    <li>Définir la variable d'environnement <code>HADOOP_HOME=C:\hadoop</code></li>
+</ol>
+
+<h3>Source officielle</h3>
+
+<ul>
+    <li>Repository GitHub : <a href="https://github.com/cdarlint/winutils" class="reference-link">https://github.com/cdarlint/winutils</a></li>
+    <li>Version recommandée : <a href="https://github.com/cdarlint/winutils/tree/master/hadoop-3.3.5/bin" class="reference-link">hadoop-3.3.5/bin</a></li>
+</ul>
+
+<h2>2.7 Java</h2>
+
+<h3>Description</h3>
+
+<p>
+Java est un prérequis indispensable pour le fonctionnement de Spark. 
+En effet, Spark est construit au-dessus de la JVM (Java Virtual Machine), 
+et toutes les opérations internes de traitement distribué s'appuient sur 
+l'environnement Java pour s'exécuter correctement.
+</p>
+
+<h3>Rôle dans le projet</h3>
+
+<p>
+Dans ce projet, Java est utilisé pour :
+</p>
+
+<ul>
+    <li>Permettre l'exécution de Spark et PySpark</li>
+    <li>Assurer le fonctionnement de la JVM nécessaire à la communication avec Py4J</li>
+    <li>Exécuter les processus distribués associés aux jobs Spark</li>
+    <li>Gérer les interactions internes entre Python, Spark, Kafka et les librairies Hadoop</li>
+</ul>
+
+<div class="warning-box">
+    <strong>Important :</strong> Spark ne peut pas démarrer si Java n'est pas installé ou si la variable <code>JAVA_HOME</code> n'est pas correctement configurée.
+</div>
+
+<h3>Versions requises</h3>
+
+<p>
+Spark 3.5.x est compatible avec :
+</p>
+
+<ul>
+    <li><strong>Java 17</strong> (recommandé)</li>
+    <li><strong>Java 21</strong> (aussi compatible)</li>
+</ul>
+
+<p>
+Toute version antérieure (Java 8, 11) risque de provoquer des erreurs de compatibilité.
+</p>
+
+<h3>Installation</h3>
+
+<ol>
+    <li>Télécharger Java (JDK) depuis la source officielle :</li>
+    <ul>
+        <li>Oracle JDK : 
+            <a href="https://www.oracle.com/java/technologies/downloads/" class="reference-link">
+                https://www.oracle.com/java/technologies/downloads/
+            </a>
+        </li>
+        <li>OpenJDK (recommandé) : 
+            <a href="https://adoptium.net" class="reference-link">
+                https://adoptium.net
+            </a>
+        </li>
+    </ul>
+
+    <li>Installer Java 17 ou 21</li>
+    <li>Repérer le chemin d’installation (ex. <code>C:\Program Files\Eclipse Adoptium\jdk-17</code>)</li>
+    <li>Créer la variable d'environnement :
+        <ul>
+            <li><code>JAVA_HOME = chemin_du_JDK</code></li>
+        </ul>
+    </li>
+    <li>Ajouter <code>%JAVA_HOME%\bin</code> au <strong>PATH</strong> et spécifier aussi cela dans le fichier <code>.env</code> du projet comme valeur de la variable <strong>JAVA_HOME</strong> </li>
+</ol>
+
+<h3>Vérification</h3>
+
+<p>Lancer les commandes suivantes dans un terminal :</p>
+
+<pre>
+    java -version
+    echo %JAVA_HOME%
+</pre>
+
+<p>Si Java est correctement installé, la version affichée doit être 17 ou 21.</p>
+
+<h3>Problèmes courants</h3>
+
+<ul>
+    <li><strong>Erreur Py4J ou JVM non trouvée :</strong> <code>JAVA_HOME</code> mal configuré</li>
+    <li><strong>Spark ne démarre pas :</strong> Java non compatible</li>
+    <li><strong>Erreur "JavaPackage is not callable" :</strong> Java non détecté par PySpark</li>
+</ul>
+
+
+<div class="page-break"></div>
+
+<h1>3. DÉPENDANCES PYTHON</h1>
+
+<h2>3.1 PySpark</h2>
+
+<h3>Description</h3>
+
+<p>PySpark est l'interface Python pour Apache Spark. Elle fournit l'API Python permettant d'utiliser Spark pour le traitement de données distribuées.</p>
+
+<h3>Utilisation dans le projet</h3>
+
+<ul>
+    <li>Création de sessions Spark</li>
+    <li>Lecture de streams Kafka via Structured Streaming</li>
+    <li>Transformations de DataFrames (filter, select, groupBy, etc.)</li>
+    <li>Chargement et application du modèle Random Forest</li>
+    <li>Écriture des résultats en mémoire pour le dashboard</li>
+</ul>
+
+<h3>Installation</h3>
+
+<pre>pip install pyspark==3.5.3</pre>
+
+<h3>Documentation</h3>
+
+<ul>
+    <li><a href="https://spark.apache.org/docs/latest/api/python/" class="reference-link">https://spark.apache.org/docs/latest/api/python/</a></li>
+</ul>
+
+<div class="page-break"></div>
+
+<h2>3.2 Kafka-Python</h2>
+
+<h3>Description</h3>
+
+<p>Kafka-Python est un client Python pour Apache Kafka. Il permet de produire et consommer des messages Kafka depuis Python.</p>
+
+<h3>Utilisation dans le projet</h3>
+
+<ul>
+    <li>Production de transactions simulées vers le topic Kafka</li>
+    <li>Sérialisation JSON des messages</li>
+</ul>
+
+<h3>Installation</h3>
+
+<pre>pip install kafka-python==2.0.2</pre>
+
+<h3>Documentation</h3>
+
+<ul>
+    <li><a href="https://kafka-python.readthedocs.io/" class="reference-link">https://kafka-python.readthedocs.io/</a></li>
+</ul>
+
+<div class="page-break"></div>
+
+<h2>3.3 Dash et Plotly</h2>
+
+<h3>Description</h3>
+
+<p><strong>Dash</strong> est un framework Python pour créer des applications web analytiques interactives. <strong>Plotly</strong> est la bibliothèque de visualisation sous-jacente.</p>
+
+<h3>Utilisation dans le projet</h3>
+
+<ul>
+    <li>Création du dashboard web temps réel</li>
+    <li>Affichage des KPIs (total transactions, fraudes détectées, précision, etc.)</li>
+    <li>Génération de graphiques interactifs (timeline, distribution, carte géographique) </li>
+</ul>
+
+<h3>Installation</h3>
+
+<pre>
+    pip install dash==3.3.0
+    pip install plotly==5.18.0
+</pre>
+
+<h3>Documentation</h3>
+
+<ul>
+    <li><a href="https://dash.plotly.com/" class="reference-link">https://dash.plotly.com/</a></li>
+</ul>
+
+<div class="page-break"></div>
+
+<h2>3.4 Pandas et NumPy</h2>
+
+<h3>Description</h3>
+
+<p><strong>Pandas</strong> est une bibliothèque Python spécialisée dans la manipulation et l’analyse de données. 
+Elle fournit des structures telles que <code>DataFrame</code> pour nettoyer, transformer et préparer les données.</p>
+
+<p><strong>NumPy</strong> est la bibliothèque fondamentale pour le calcul scientifique en Python. 
+Elle fournit des tableaux multidimensionnels performants et des opérations mathématiques optimisées.</p>
+
+<h3>Utilisation dans le projet</h3>
+
+<ul>
+    <li>Chargement et transformation des datasets (transactions brutes, features, statistiques)</li>
+    <li>Prétraitement avant l'envoi dans Spark (conversion, nettoyage, fusion)</li>
+    <li>Calculs mathématiques intensifs nécessaires au feature engineering</li>
+    <li>Préparation des batchs pour l’entraînement du modèle</li>
+</ul>
+
+<h3>Installation</h3>
+
+<pre>
+    pip install pandas==2.3.3
+    pip install numpy==1.26.2
+</pre>
+
+<h3>Documentation</h3>
+
+<ul>
+    <li><a href="https://pandas.pydata.org/" class="reference-link">https://pandas.pydata.org/</a></li>
+    <li><a href="https://numpy.org/" class="reference-link">https://numpy.org/</a></li>
+</ul>
+
+<h2>3.5 Autres dépendances Python</h2>
+
+<h3>Description</h3>
+
+<p>
+Le projet utilise plusieurs autres bibliothèques Python, toutes listées dans le fichier 
+<code>requirements.txt</code>. Ces dépendances couvrent divers besoins : traitement des données, 
+connexion à Kafka, machine learning, API, visualisation, et intégration avec Spark.
+</p>
+
+<p>
+Toutes les dépendances peuvent être installées automatiquement via la commande :
+</p>
+
+<pre>
+    pip install -r requirements.txt
+</pre>
+
+<h3>Dépendances notables</h3>
+
+<ul>
+    <li><strong>joblib</strong> — Sérialisation et sauvegarde d'artefacts</li>
+    <li><strong>python-dotenv</strong> — Chargement des variables d'environnement depuis <code>.env</code></li>
+</ul>
+
+<h3>Fichier requirements.txt</h3>
+
+<p>Extrait (non exhaustif) :</p>
+
+<pre>
+pandas==2.3.3
+numpy==1.26.2
+pyspark==3.5.1
+platformdirs==4.5.0
+plotly==5.18.0
+prometheus-client==0.19.0
+prompt_toolkit==3.0.52
+psutil==7.1.3
+pure_eval==0.2.3
+py4j==0.10.9.7
+pyarrow==14.0.1
+pycparser==2.23
+Pygments==2.19.2
+pyspark==3.5.3
+python-dateutil==2.9.0.post0
+python-dotenv==1.2.1
+python-json-logger==4.0.0
+joblib==1.3.2
+</pre>
+
+<div class="page-break"></div>
+
+<h2 class="warning-box">Environnement virtuel Python (Recommandé)</h2>
+
+<h3>Description</h3>
+
+<p>
+Afin d’isoler proprement les dépendances du projet et d’éviter les conflits de versions, 
+il est recommandé d’utiliser un environnement virtuel Python.
+</p>
+
+<h3>Création d’un environnement virtuel</h3>
+
+<pre>
+    python -m venv sparkEnv
+    sparkEnv\Scripts\activate  (Windows)
+    source sparkEnv/bin/activate  (Linux/Mac)
+</pre>
+
+<h3>Configuration dans le fichier .env</h3>
+
+<p>
+Il peut être nécessaire d’indiquer explicitement à Spark l’emplacement du Python de l’environnement virtuel.
+</p>
+
+<p>Dans votre fichier <code>.env</code>, ajouter :</p>
+
+<pre>
+    PYTHON_SPARK=C:/chemin/vers/sparkEnv/Scripts/python.exe
+    PYSPARK_DRIVER_PYTHON=C:/chemin/vers/sparkEnv/Scripts/python.exe
+</pre>
+
+<p>
+Cette configuration garantit que Spark utilise le bon interpréteur Python 
+et évite les erreurs de compatibilité lors de l’exécution.
+</p>
+
+<div class="page-break"></div>
+
+<div class="page-break"></div>
+
+<h1>4. CONFIGURATION DE L'ENVIRONNEMENT</h1>
+
+<h2>4.1 Structure du projet</h2>
+
+<h3>Organisation des répertoires</h3>
+
+<pre>
+fraud-detection-spark/
+├── data/
+│   ├── checkpoints/              # Checkpoints Spark Streaming
+│   ├── transactions/             # Données générées en temps réel
+│   ├── historical/               # Données historiques pour entraînement
+│   └── models/                   # Modèles ML sauvegardés
+├── logs/
+│   └── app.log                   # Logs applicatifs
+├── notebooks/
+│   ├── 01_generate_historical_data.ipynb
+│   └── 02_model_training.ipynb
+├── src/
+│   ├── producers/
+│   │   └── transaction_generator.py
+│   ├── streaming/
+│   │   ├── fraud_detector.py     # Détection par règles
+│   │   └── ml_fraud_detector.py  # Détection ML
+│   ├── models/
+│   │   ├── transactions.py       # Modèles de données
+│   │   ├── train_model.py
+│   │   └── feature_engineering.py
+│   ├── utils/
+│   │   ├── logger.py
+│   │   ├── kafka_utils.py
+│   │   └── spark_utils.py
+│   ├── data_generation/
+│   │   └── generate_historical.py
+│   └── dashboard/
+│       ├── layouts/
+│       └── app.py
+├── config/
+│   └── config.yaml
+├── run_generate_data.py
+├── run_generator.py
+├── run_train_model.py
+├── run_detector_simple.py
+├── test_ml_model.py
+├── verify_spark_kafka.py
+├── launch_system_fixed.bat
+├── run_ml_detector.bat
+├── start_here.bat
+├── sparkEnv/                     # Environnement virtuel Python
+├── .env                          # Variables d'environnement
+├── docker-compose.yml
+├── requirements.txt
+├── project-structure.md
+├── documentation.pdf
+├── QUICK_START.md
+└── README.md
+</pre>
+
+<h3>Description des répertoires principaux</h3>
+
+<table>
+    <tr>
+        <th>Répertoire</th>
+        <th>Contenu</th>
+        <th>Rôle</th>
+    </tr>
+    <tr>
+        <td><code>data/</code></td>
+        <td>Données et modèles</td>
+        <td>Stockage des données générées, checkpoints Spark et modèles ML</td>
+    </tr>
+    <tr>
+        <td><code>logs/</code></td>
+        <td>Fichiers de logs</td>
+        <td>Centralisation des logs applicatifs</td>
+    </tr>
+    <tr>
+        <td><code>notebooks/</code></td>
+        <td>Jupyter notebooks</td>
+        <td>Génération de données historiques et entraînement ML</td>
+    </tr>
+    <tr>
+        <td><code>src/producers/</code></td>
+        <td>Générateurs de données</td>
+        <td>Production de transactions vers Kafka</td>
+    </tr>
+    <tr>
+        <td><code>src/streaming/</code></td>
+        <td>Consommateurs Spark</td>
+        <td>Détection de fraudes (règles et ML)</td>
+    </tr>
+    <tr>
+        <td><code>src/models/</code></td>
+        <td>Modèles de données et ML</td>
+        <td>Structures de données et entraînement</td>
+    </tr>
+    <tr>
+        <td><code>src/utils/</code></td>
+        <td>Utilitaires</td>
+        <td>Configuration Kafka, Spark, logging</td>
+    </tr>
+    <tr>
+        <td><code>src/dashboard/</code></td>
+        <td>Interface web</td>
+        <td>Visualisation temps réel avec Dash</td>
+    </tr>
+    <tr>
+        <td><code>config/</code></td>
+        <td>Fichiers de configuration</td>
+        <td>Configuration YAML du système</td>
+    </tr>
+</table>
+
+<h3>Scripts de lancement principaux</h3>
+
+<table>
+    <tr>
+        <th>Script</th>
+        <th>Description</th>
+        <th>Usage</th>
+    </tr>
+    <tr>
+        <td><code>verify_spark_kafka.py</code></td>
+        <td>Vérification environnement</td>
+        <td>Tester Spark et Kafka avant démarrage</td>
+    </tr>
+    <tr>
+        <td><code>run_generate_data.py</code></td>
+        <td>Génération données historiques</td>
+        <td>Créer dataset pour entraînement ML</td>
+    </tr>
+    <tr>
+        <td><code>run_train_model.py</code></td>
+        <td>Entraînement modèle ML</td>
+        <td>Créer le modèle Random Forest</td>
+    </tr>
+    <tr>
+        <td><code>test_ml_model.py</code></td>
+        <td>Test modèle sans Kafka</td>
+        <td>Vérifier le modèle fonctionne</td>
+    </tr>
+    <tr>
+        <td><code>run_generator.py</code></td>
+        <td>Producteur temps réel</td>
+        <td>Générer transactions vers Kafka</td>
+    </tr>
+    <tr>
+        <td><code>run_detector_simple.py</code></td>
+        <td>Détecteur ML direct</td>
+        <td>Lancer détection avec Python</td>
+    </tr>
+    <tr>
+        <td><code>run_ml_detector.bat</code></td>
+        <td>Détecteur ML spark-submit</td>
+        <td>Lancer détection avec spark-submit</td>
+    </tr>
+    <tr>
+        <td><code>start_here.bat</code></td>
+        <td>Menu interactif</td>
+        <td>Guide pas à pas pour démarrer</td>
+    </tr>
+    <tr>
+        <td><code>launch_system_fixed.bat</code></td>
+        <td>Lancement automatique</td>
+        <td>Démarrer tout le système</td>
+    </tr>
+</table>
+
+<div class="page-break"></div>
+
+<h2>4.2 Variables d'environnement</h2>
+
+<h3>Fichier .env</h3>
+
+<p>
+Le fichier <code>.env</code> contient toutes les variables de configuration du projet.
+Certaines variables doivent être adaptées selon l'environnement local, d'autres 
+sont fixes et ne doivent pas être modifiées.
+</p>
+
+<h3>Variables Kafka</h3>
+
+<table>
+    <tr>
+        <th>Variable</th>
+        <th>Valeur par défaut</th>
+        <th>Modifiable</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td><code>KAFKA_BOOTSTRAP_SERVERS</code></td>
+        <td>localhost:9092</td>
+        <td>Non</td>
+        <td>Adresse du broker Kafka</td>
+    </tr>
+    <tr>
+        <td><code>KAFKA_TOPIC</code></td>
+        <td>transactions</td>
+        <td>Non</td>
+        <td>Nom du topic utilisé</td>
+    </tr>
+    <tr>
+        <td><code>KAFKA_CONSUMER_GROUP</code></td>
+        <td>fraud-detection-group</td>
+        <td>Non</td>
+        <td>Groupe de consommateurs</td>
+    </tr>
+</table>
+
+<h3>Variables Spark</h3>
+
+<table>
+    <tr>
+        <th>Variable</th>
+        <th>Valeur par défaut</th>
+        <th>Modifiable</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td><code>SPARK_APP_NAME</code></td>
+        <td>FraudDetectionSystem</td>
+        <td>Non</td>
+        <td>Nom de l'application Spark</td>
+    </tr>
+    <tr>
+        <td><code>SPARK_MASTER</code></td>
+        <td>local[*]</td>
+        <td>Non</td>
+        <td>Mode d'exécution (tous les cœurs)</td>
+    </tr>
+    <tr>
+        <td><code>SPARK_LOG_LEVEL</code></td>
+        <td>WARN</td>
+        <td>Oui</td>
+        <td>Niveau de log (WARN, INFO, DEBUG)</td>
+    </tr>
+    <tr>
+        <td><code>PYSPARK_PYTHON</code></td>
+        <td>./sparkEnv/Scripts/python.exe</td>
+        <td>Oui</td>
+        <td>Chemin Python environnement virtuel</td>
+    </tr>
+</table>
+
+<div class="warning-box">
+    <strong>Important :</strong> La variable <code>PYSPARK_PYTHON</code> doit pointer vers 
+    l'exécutable Python de votre environnement virtuel. Adaptez le chemin selon votre installation.
+</div>
+
+<h3>Variables Java et Hadoop</h3>
+
+<table>
+    <tr>
+        <th>Variable</th>
+        <th>Valeur exemple</th>
+        <th>Modifiable</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td><code>JAVA_HOME</code></td>
+        <td>C:/Program Files/Eclipse Adoptium/jdk-21.0.6.7-hotspot</td>
+        <td>Oui (obligatoire)</td>
+        <td>Chemin installation Java JDK</td>
+    </tr>
+    <tr>
+        <td><code>HADOOP_HOME</code></td>
+        <td>C:/hadoop</td>
+        <td>Oui (Windows)</td>
+        <td>Chemin Winutils (Windows uniquement)</td>
+    </tr>
+</table>
+
+<div class="warning-box">
+    <strong>Configuration requise :</strong>
+    <ul>
+        <li><code>JAVA_HOME</code> doit pointer vers votre installation Java 17 ou 21</li>
+        <li><code>HADOOP_HOME</code> est nécessaire uniquement sur Windows</li>
+        <li>Ces chemins doivent correspondre à votre installation locale</li>
+    </ul>
+</div>
+
+<h3>Variables Application</h3>
+
+<table>
+    <tr>
+        <th>Variable</th>
+        <th>Valeur par défaut</th>
+        <th>Modifiable</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td><code>TRANSACTION_RATE</code></td>
+        <td>1000</td>
+        <td>Oui</td>
+        <td>Transactions par seconde générées</td>
+    </tr>
+    <tr>
+        <td><code>FRAUD_RATE</code></td>
+        <td>0.02</td>
+        <td>Oui</td>
+        <td>Taux de fraudes (2%)</td>
+    </tr>
+    <tr>
+        <td><code>DATA_PATH</code></td>
+        <td>./data</td>
+        <td>Non</td>
+        <td>Répertoire principal des données</td>
+    </tr>
+    <tr>
+        <td><code>MODEL_PATH</code></td>
+        <td>./data/models</td>
+        <td>Non</td>
+        <td>Répertoire des modèles ML</td>
+    </tr>
+    <tr>
+        <td><code>LOG_PATH</code></td>
+        <td>./logs/app.log</td>
+        <td>Non</td>
+        <td>Fichier de logs</td>
+    </tr>
+</table>
+
+<h3>Variables Dashboard</h3>
+
+<table>
+    <tr>
+        <th>Variable</th>
+        <th>Valeur par défaut</th>
+        <th>Modifiable</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td><code>DASHBOARD_PORT</code></td>
+        <td>8050</td>
+        <td>Oui</td>
+        <td>Port du serveur Dash</td>
+    </tr>
+    <tr>
+        <td><code>DASHBOARD_UPDATE_INTERVAL</code></td>
+        <td>2</td>
+        <td>Oui</td>
+        <td>Intervalle de rafraîchissement (secondes)</td>
+    </tr>
+</table>
+
+<h3>Variables Modèle ML</h3>
+
+<table>
+    <tr>
+        <th>Variable</th>
+        <th>Valeur par défaut</th>
+        <th>Modifiable</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td><code>MODEL_TYPE</code></td>
+        <td>RandomForest</td>
+        <td>Non</td>
+        <td>Type de modèle utilisé</td>
+    </tr>
+    <tr>
+        <td><code>ANOMALY_THRESHOLD</code></td>
+        <td>0.7</td>
+        <td>Oui</td>
+        <td>Seuil de détection d'anomalie (0-1)</td>
+    </tr>
+</table>
+
+<h3>Exemple de fichier .env complet</h3>
+
+<pre>
+# Kafka Configuration
+KAFKA_BOOTSTRAP_SERVERS=localhost:9092
+KAFKA_TOPIC=transactions
+KAFKA_CONSUMER_GROUP=fraud-detection-group
+
+# Spark Configuration
+SPARK_APP_NAME=FraudDetectionSystem
+SPARK_MASTER=local[*]
+SPARK_LOG_LEVEL=WARN
+PYSPARK_PYTHON=./sparkEnv/Scripts/python.exe
+
+# Java configuration
+JAVA_HOME=C:/Program Files/Eclipse Adoptium/jdk-21.0.6.7-hotspot
+
+# Hadoop pour Windows
+HADOOP_HOME=C:/hadoop
+
+# Application Configuration
+TRANSACTION_RATE=1000
+FRAUD_RATE=0.02
+
+# Paths
+DATA_PATH=./data
+MODEL_PATH=./data/models
+LOG_PATH=./logs/app.log
+
+# Dashboard
+DASHBOARD_PORT=8050
+DASHBOARD_UPDATE_INTERVAL=2
+
+# ML Model Parameters
+MODEL_TYPE=RandomForest
+ANOMALY_THRESHOLD=0.7
+</pre>
+
+<div class="info-box">
+    <strong>Note :</strong> Créez ce fichier à la racine du projet. 
+    N'oubliez pas d'ajouter <code>.env</code> dans votre <code>.gitignore</code> 
+    pour éviter de commiter des chemins locaux.
+</div>
+
+<div class="page-break"></div>
+
+<h2>4.3 Docker Compose</h2>
+
+<h3>Rôle du fichier docker-compose.yml</h3>
+
+<p>
+Le fichier <code>docker-compose.yml</code> définit et orchestre les services 
+Kafka et Zookeeper nécessaires au fonctionnement du système. Docker Compose 
+permet de démarrer ces deux services avec une seule commande.
+</p>
+
+<h3>Structure du fichier</h3>
+
+<pre>
+version: '3.8'
+
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+</pre>
+
+<h3>Explications des paramètres</h3>
+
+<h4>Service Zookeeper</h4>
+
+<table>
+    <tr>
+        <th>Paramètre</th>
+        <th>Valeur</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td><code>image</code></td>
+        <td>confluentinc/cp-zookeeper:latest</td>
+        <td>Image Docker officielle Confluent</td>
+    </tr>
+    <tr>
+        <td><code>container_name</code></td>
+        <td>zookeeper</td>
+        <td>Nom du conteneur</td>
+    </tr>
+    <tr>
+        <td><code>ZOOKEEPER_CLIENT_PORT</code></td>
+        <td>2181</td>
+        <td>Port d'écoute pour les clients</td>
+    </tr>
+    <tr>
+        <td><code>ZOOKEEPER_TICK_TIME</code></td>
+        <td>2000</td>
+        <td>Unité de temps en millisecondes</td>
+    </tr>
+    <tr>
+        <td><code>ports</code></td>
+        <td>2181:2181</td>
+        <td>Mapping port hôte:conteneur</td>
+    </tr>
+</table>
+
+<h4>Service Kafka</h4>
+
+<table>
+    <tr>
+        <th>Paramètre</th>
+        <th>Valeur</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td><code>image</code></td>
+        <td>confluentinc/cp-kafka:latest</td>
+        <td>Image Docker officielle Confluent</td>
+    </tr>
+    <tr>
+        <td><code>depends_on</code></td>
+        <td>zookeeper</td>
+        <td>Kafka démarre après Zookeeper</td>
+    </tr>
+    <tr>
+        <td><code>KAFKA_BROKER_ID</code></td>
+        <td>1</td>
+        <td>Identifiant unique du broker</td>
+    </tr>
+    <tr>
+        <td><code>KAFKA_ZOOKEEPER_CONNECT</code></td>
+        <td>zookeeper:2181</td>
+        <td>Adresse de Zookeeper</td>
+    </tr>
+    <tr>
+        <td><code>KAFKA_ADVERTISED_LISTENERS</code></td>
+        <td>PLAINTEXT://localhost:9092</td>
+        <td>Adresse annoncée aux clients</td>
+    </tr>
+    <tr>
+        <td><code>KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR</code></td>
+        <td>1</td>
+        <td>Pas de réplication (développement)</td>
+    </tr>
+</table>
+
+<h3>Commandes Docker Compose</h3>
+
+<h4>Démarrer les services</h4>
+
+<pre>docker-compose up -d</pre>
+
+<p>L'option <code>-d</code> (detached) lance les conteneurs en arrière-plan.</p>
+
+<h4>Vérifier l'état des services</h4>
+
+<pre>docker-compose ps</pre>
+
+<p>Sortie attendue :</p>
+
+<pre>
+NAME          IMAGE                              STATUS    PORTS
+kafka         confluentinc/cp-kafka:latest       Up        0.0.0.0:9092->9092/tcp
+zookeeper     confluentinc/cp-zookeeper:latest   Up        0.0.0.0:2181->2181/tcp
+</pre>
+
+<h4>Voir les logs</h4>
+
+<pre>
+# Tous les services
+docker-compose logs
+
+# Service spécifique
+docker-compose logs kafka
+docker-compose logs zookeeper
+
+# Suivre en temps réel
+docker-compose logs -f kafka
+</pre>
+
+<h4>Arrêter les services</h4>
+
+<pre>docker-compose down</pre>
+
+<h4>Redémarrer les services</h4>
+
+<pre>docker-compose restart</pre>
+
+<h3>Vérification du bon fonctionnement</h3>
+
+<p>Pour vérifier que Kafka est opérationnel :</p>
+
+<pre>
+# Lister les topics
+docker exec -it kafka kafka-topics --bootstrap-server localhost:9092 --list
+
+# Créer un topic de test
+docker exec -it kafka kafka-topics --create --topic test \
+  --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
+
+# Envoyer un message
+docker exec -it kafka bash -c \
+  "echo 'test message' | kafka-console-producer --broker-list localhost:9092 --topic test"
+
+# Lire le message
+docker exec -it kafka kafka-console-consumer \
+  --bootstrap-server localhost:9092 --topic test --from-beginning
+</pre>
+
+<div class="info-box">
+    <strong>Remarque :</strong> Le topic <code>transactions</code> sera créé automatiquement 
+    par le producteur Python lors de son premier lancement.
+</div>
+
+<div class="page-break"></div>
+
+<h1>5. RÉFÉRENCES</h1>
+
+<h2>5.1 Documentation officielle</h2>
+
+<h3>Technologies principales</h3>
+
+<table>
+    <tr>
+        <th>Technologie</th>
+        <th>Documentation</th>
+        <th>Ressources additionnelles</th>
+    </tr>
+    <tr>
+        <td><strong>Apache Spark</strong></td>
+        <td>
+            <a href="https://spark.apache.org/docs/latest/" class="reference-link">
+                spark.apache.org/docs/latest
+            </a>
+        </td>
+        <td>
+            <a href="https://spark.apache.org/examples.html" class="reference-link">
+                Exemples officiels
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td><strong>Apache Kafka</strong></td>
+        <td>
+            <a href="https://kafka.apache.org/documentation/" class="reference-link">
+                kafka.apache.org/documentation
+            </a>
+        </td>
+        <td>
+            <a href="https://kafka.apache.org/quickstart" class="reference-link">
+                Quickstart Guide
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td><strong>Docker</strong></td>
+        <td>
+            <a href="https://docs.docker.com/" class="reference-link">
+                docs.docker.com
+            </a>
+        </td>
+        <td>
+            <a href="https://docs.docker.com/compose/" class="reference-link">
+                Docker Compose
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td><strong>Python</strong></td>
+        <td>
+            <a href="https://docs.python.org/3/" class="reference-link">
+                docs.python.org/3
+            </a>
+        </td>
+        <td>
+            <a href="https://pypi.org/" class="reference-link">
+                PyPI
+            </a>
+        </td>
+    </tr>
+</table>
+
+<h3>Bibliothèques Python</h3>
+
+<table>
+    <tr>
+        <th>Bibliothèque</th>
+        <th>Documentation</th>
+    </tr>
+    <tr>
+        <td>PySpark</td>
+        <td><a href="https://spark.apache.org/docs/latest/api/python/" class="reference-link">spark.apache.org/docs/latest/api/python</a></td>
+    </tr>
+    <tr>
+        <td>kafka-python</td>
+        <td><a href="https://kafka-python.readthedocs.io/" class="reference-link">kafka-python.readthedocs.io</a></td>
+    </tr>
+    <tr>
+        <td>Dash</td>
+        <td><a href="https://dash.plotly.com/" class="reference-link">dash.plotly.com</a></td>
+    </tr>
+    <tr>
+        <td>Plotly</td>
+        <td><a href="https://plotly.com/python/" class="reference-link">plotly.com/python</a></td>
+    </tr>
+    <tr>
+        <td>Pandas</td>
+        <td><a href="https://pandas.pydata.org/docs/" class="reference-link">pandas.pydata.org/docs</a></td>
+    </tr>
+    <tr>
+        <td>NumPy</td>
+        <td><a href="https://numpy.org/doc/" class="reference-link">numpy.org/doc</a></td>
+    </tr>
+</table>
+
+<div class="page-break"></div>
+
+<h2>5.2 Ressources complémentaires</h2>
+
+<h3>Tutoriels et guides</h3>
+
+<ul>
+    <li>
+        <strong>Spark Structured Streaming</strong> :
+        <a href="https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html" class="reference-link">
+            Programming Guide
+        </a>
+    </li>
+    <li>
+        <strong>Spark MLlib</strong> :
+        <a href="https://spark.apache.org/docs/latest/ml-guide.html" class="reference-link">
+            ML Guide
+        </a>
+    </li>
+    <li>
+        <strong>Kafka Streams</strong> :
+        <a href="https://kafka.apache.org/documentation/streams/" class="reference-link">
+            Streams API
+        </a>
+    </li>
+    <li>
+        <strong>Docker Best Practices</strong> :
+        <a href="https://docs.docker.com/develop/dev-best-practices/" class="reference-link">
+            Development Best Practices
+        </a>
+    </li>
+</ul>
+
+<h3>Dépôts GitHub</h3>
+
+<ul>
+    <li>
+        <strong>Apache Spark</strong> :
+        <a href="https://github.com/apache/spark" class="reference-link">
+            github.com/apache/spark
+        </a>
+    </li>
+    <li>
+        <strong>Apache Kafka</strong> :
+        <a href="https://github.com/apache/kafka" class="reference-link">
+            github.com/apache/kafka
+        </a>
+    </li>
+    <li>
+        <strong>Winutils</strong> :
+        <a href="https://github.com/cdarlint/winutils" class="reference-link">
+            github.com/cdarlint/winutils
+        </a>
+    </li>
+</ul>
+
+<h3>Licences</h3>
+
+<table>
+    <tr>
+        <th>Composant</th>
+        <th>Licence</th>
+        <th>Lien</th>
+    </tr>
+    <tr>
+        <td>Apache Spark</td>
+        <td>Apache License 2.0</td>
+        <td><a href="https://www.apache.org/licenses/LICENSE-2.0" class="reference-link">apache.org/licenses/LICENSE-2.0</a></td>
+    </tr>
+    <tr>
+        <td>Apache Kafka</td>
+        <td>Apache License 2.0</td>
+        <td><a href="https://www.apache.org/licenses/LICENSE-2.0" class="reference-link">apache.org/licenses/LICENSE-2.0</a></td>
+    </tr>
+    <tr>
+        <td>Docker</td>
+        <td>Apache License 2.0</td>
+        <td><a href="https://www.apache.org/licenses/LICENSE-2.0" class="reference-link">apache.org/licenses/LICENSE-2.0</a></td>
+    </tr>
+    <tr>
+        <td>Python</td>
+        <td>PSF License</td>
+        <td><a href="https://docs.python.org/3/license.html" class="reference-link">docs.python.org/3/license.html</a></td>
+    </tr>
+    <tr>
+        <td>Dash</td>
+        <td>MIT License</td>
+        <td><a href="https://opensource.org/licenses/MIT" class="reference-link">opensource.org/licenses/MIT</a></td>
+    </tr>
+</table>
+
+<h3>Support et communauté</h3>
+
+<ul>
+    <li>
+        <strong>Stack Overflow - Apache Spark</strong> :
+        <a href="https://stackoverflow.com/questions/tagged/apache-spark" class="reference-link">
+            Questions tagged [apache-spark]
+        </a>
+    </li>
+    <li>
+        <strong>Stack Overflow - Apache Kafka</strong> :
+        <a href="https://stackoverflow.com/questions/tagged/apache-kafka" class="reference-link">
+            Questions tagged [apache-kafka]
+        </a>
+    </li>
+    <li>
+        <strong>Confluent Community</strong> :
+        <a href="https://forum.confluent.io/" class="reference-link">
+            forum.confluent.io
+        </a>
+    </li>
+    <li>
+        <strong>Spark User Mailing List</strong> :
+        <a href="https://spark.apache.org/community.html" class="reference-link">
+            spark.apache.org/community.html
+        </a>
+    </li>
+</ul>
+
+<div class="page-break"></div>
+
+<h1>CONCLUSION</h1>
+
+<p>
+Cette documentation technique présente l'ensemble des services externes et des dépendances 
+utilisés dans le projet de détection de fraudes bancaires en temps réel. Chaque composant 
+a été choisi pour sa robustesse, sa scalabilité et sa large adoption dans l'industrie.
+</p>
+
+<p>
+Les références fournies permettent d'approfondir la compréhension de chaque technologie 
+et facilitent la reproduction du projet.
+</p>
+
+</html>

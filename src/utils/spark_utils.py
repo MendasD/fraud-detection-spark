@@ -19,7 +19,7 @@ logger = setup_logger(__name__)
 python_path = sys.executable
 os.environ["PYSPARK_PYTHON"] = os.getenv('PYSPARK_PYTHON', python_path)
 os.environ["PYSPARK_DRIVER_PYTHON"] = os.getenv('PYSPARK_PYTHON', python_path)
-os.environ["JAVA_HOME"] = r"C:\Program Files\Eclipse Adoptium\jdk-21.0.6.7-hotspot" # Java 17 compatible pour spark 3.5.x
+os.environ["JAVA_HOME"] = os.getenv('JAVA_HOME') # Java 21 compatible pour spark 3.5.x
 
 # Configurer HADOOP_HOME pour Windows si défini dans .env
 hadoop_home = os.getenv('HADOOP_HOME')

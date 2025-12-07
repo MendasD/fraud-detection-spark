@@ -2,61 +2,77 @@
 
 ## Présentation
 
-Ce projet met en place un système de **détection de fraude financière en temps réel** basé sur une architecture Big Data.  
+Ce projet met en place un système de **détection de fraude financière en temps réel** basé sur une architecture Big Data.
 Il simule des flux massifs de transactions et utilise **Kafka** pour le streaming et **PySpark** pour le traitement et la détection de fraude.
 
-Ce projet est conçu pour reproduire un cas réel de travail d’un **Data Scientist / Data Engineer** en environnement Big Data.
+Le projet reproduit un cas réel de travail d’un **Data Engineer / Data Scientist** en environnement Big Data.
 
 ---
 
 ## Structure du projet
 
 ```markdown
-
 fraud-detection-spark/
 ├── data/
-│   ├── transactions/       # Données générées
-│   └── models/             # Modèles ML sauvegardés
-|── logs/
-|    ├── app.log            # Logs de l'application
+│   ├── checkpoints/
+│   ├── transactions/       
+│   ├── historical/         
+│   └── models/             
+├── logs/
+│   └── app.log            
 ├── notebooks/
-│   ├── 01_data_exploration.ipynb
-│   ├── 02_model_training.ipynb
-│   └── 03_performance_analysis.ipynb
+│   ├── 01_generate_historical_data.ipynb
+│   └── 02_model_training.ipynb
 ├── src/
 │   ├── producers/
-│   │   └── transaction_generator.py    # Génère et envoie à Kafka
+│   │   └── transaction_generator.py
 │   ├── streaming/
-│   │   └── fraud_detector.py           # Spark Streaming consumer
+│   │   ├── fraud_detector.py
+│   │   └── ml_fraud_detector.py
 │   ├── models/
-|   |   ├── transactions.py              # Modèle de données, méthodes de sérialisation JSON
-│   │   ├── train_model.py              # Entraînement ML
-│   │   └── feature_engineering.py      # Features pour détection
+│   │   ├── transactions.py
+│   │   ├── train_model.py
+│   │   └── feature_engineering.py
 │   ├── utils/
-|   |   ├── logger.py                  # Configuration du système de logging
+│   │   ├── logger.py
 │   │   ├── kafka_utils.py
 │   │   └── spark_utils.py
+│   ├── data_generation/
+│   │   └── generate_historical.py  
 │   └── dashboard/
-│       └── app.py                      # Dashboard temps réel
+│       ├── layouts/
+│       └── app.py
 ├── config/
 │   └── config.yaml
-|── .env                                # Variables d'environnement
-├── docker-compose.yml                  # Kafka + Zookeeper
+├── run_generate_data.py
+├── run_generator.py
+├── run_train_model.py
+├── run_detector_simple.py
+├── test_ml_model.py
+├── verify_spark_kafka.py
+├── launch_system_fixed.bat
+├── run_ml_detector.bat
+├── start_here.bat
+├── sparkEnv/              # Environnement virtuel
+├── .env                   # Variables d'environnement
+├── docker-compose.yml
 ├── requirements.txt
+├── project-structure.md
+├── documentation.html
+├── QUICK_START.md
 └── README.md
-
 ```
 
 ---
 
 ## Version Python requise
 
-Ce projet fonctionne uniquement avec :
+Le projet fonctionne uniquement avec :
 
-Python 3.10.x
-❌ Python 3.11+ peut causer des incompatibilités avec PySpark et certaines dépendances.
+**Python 3.10.x**
+⚠️ Python 3.11+ peut causer des incompatibilités avec PySpark.
 
-Vérification de la version :
+Vérifier votre version :
 
 ```bash
 python --version
@@ -66,10 +82,12 @@ python --version
 
 ## Installation
 
-Créer un environnement virtuel :
+### 1. Créer l’environnement virtuel (à la racine du projet)
+
+Il est recommandé de créer un environnement virtuel nommé **sparkEnv** :
 
 ```bash
-python -m venv venv
+python -m venv sparkEnv
 ```
 
 Activer l’environnement :
@@ -77,10 +95,12 @@ Activer l’environnement :
 Sous Windows :
 
 ```bash
-venv\Scripts\activate
+sparkEnv\Scripts\activate
 ```
 
-Installer les dépendances :
+---
+
+### 2. Installer les dépendances Python
 
 ```bash
 pip install -r requirements.txt
@@ -88,37 +108,115 @@ pip install -r requirements.txt
 
 ---
 
-## Lancer l’infrastructure Kafka
+### 3. Configuration du fichier `.env`
 
-Avec Docker :
+Créer un fichier `.env` à la racine du projet.
+
+Copier la configuration décrite dans **documentation.html**, puis **adapter les chemins selon votre machine**, notamment :
+
+* Chemin vers Java
+* Chemin vers Python (environnement virtuel)
+* Configuration Kafka
+
+⚠️ Il peut être nécessaire de définir dans le `.env` :
+
+```env
+PYTHON_SPARK=C:\chemin\vers\sparkEnv\Scripts\python.exe
+PYSPARK_DRIVER_PYTHON=C:\chemin\vers\sparkEnv\Scripts\python.exe
+JAVA_HOME=C:\chemin\vers\java
+```
+
+---
+
+## Installation de Java
+
+Le projet nécessite **Java 17 ou plus**.
+
+1. Télécharger et installer Java (JDK 17 ou 21 recommandé)
+2. Ajouter Java aux variables d’environnement système
+3. Mettre à jour la variable suivante dans le fichier `.env` :
+
+```env
+JAVA_HOME=C:\Program Files\...
+```
+
+---
+
+## Lancer Kafka
+
+### Option 1 — Via Docker (recommandé)
 
 ```bash
 docker-compose up -d
 ```
 
+### Option 2 — Installation locale de Kafka (si Docker pose problème)
+
+Si Docker plante ou que le serveur Kafka se coupe :
+
+1. Télécharger Kafka :
+   [https://kafka.apache.org/downloads](https://kafka.apache.org/downloads)
+   (Version recommandée : **Scala 2.13 – Kafka 3.7.2**)
+
+2. Démarrer le serveur Kafka :
+
+```bash
+bin\windows\kafka-server-start.bat config\kraft\server.properties
+```
+
+⚠️ Assurez-vous que Kafka et Zookeeper sont bien actifs avant de continuer.
+
 ---
 
-## Exécution du projet
+## Démarrage du système
 
-Générer les transactions (producteur Kafka) :
+### Méthode recommandée ✅
+
+Lancer simplement :
+
+```bash
+start_here.bat
+```
+
+(Double-cliquer sur le fichier)
+
+Puis suivre les étapes affichées à l’écran.
+
+Avant cela, assurez-vous que :
+
+* L’environnement virtuel est activé
+* Kafka est démarré
+* Le fichier `.env` est correctement configuré
+
+---
+
+### Lancement manuel (si nécessaire)
+
+Générer les transactions :
 
 ```bash
 python src/producers/transaction_generator.py
 ```
 
-Lancer le traitement en streaming avec Spark :
+Lancer Spark Streaming (règles simples) :
 
 ```bash
 python src/streaming/fraud_detector.py
 ```
 
-Entraîner le modèle de Machine Learning :
+Entraîner le modèle ML :
 
 ```bash
 python src/models/train_model.py
 ```
 
-Lancer le dashboard temps réel :
+Lancer la détection ML :
+
+```bash
+python src/streaming/ml_fraud_detector.py
+```
+
+Lancer le dashboard en temps réel :
 
 ```bash
 python src/dashboard/app.py
@@ -128,17 +226,21 @@ python src/dashboard/app.py
 
 ## Logs
 
-Les journaux de l’application sont stockés ici :
+Les journaux sont disponibles ici :
 
+```
 logs/app.log
+```
 
 ---
 
 ## Objectif du projet
 
-Ce projet montre concrètement :
+Ce projet démontre :
 
 * Le traitement de données massives en temps réel
-* L’architecture Kafka + Spark
+* Une architecture Kafka + Spark
 * La détection automatique de fraude financière
-* Une architecture proche du monde professionnel
+* Une architecture proche des standards professionnels
+
+---

@@ -1689,3 +1689,30 @@
 [2025-12-03 10:47:16 - __main__] - INFO - ** Master: local[*]
 [2025-12-03 10:56:05 - __main__] - INFO - ** Spark 4.0.1 démarré
 [2025-12-03 10:56:05 - __main__] - INFO - ** Master: local[*]
+[2025-12-03 11:24:14 - __main__] - INFO - ** Spark 3.5.3 démarré
+[2025-12-03 11:24:14 - __main__] - INFO - ** Master: local[*]
+[2025-12-03 11:24:30 - __main__] - INFO -  Chargement des données
+[2025-12-03 11:24:43 - __main__] - INFO - ="="=" Données chargées: 13,779,047 transactions ="="="
+[2025-12-03 11:24:43 - __main__] - INFO - ="="=" Partitions Spark: 9 ="="="
+[2025-12-03 11:25:03 - __main__] - INFO - *** Feature Engineering ***
+[2025-12-03 11:25:03 - __main__] - INFO - *** Features créées ***
+[2025-12-03 11:33:18 - __main__] - INFO - *** Entraînement du modèle ***
+[2025-12-03 11:33:18 - __main__] - INFO - Configuration du random forest
+[2025-12-03 11:33:19 - __main__] - INFO - Entraînement du modèle (Spark va paralléliser automatiquement)
+[2025-12-03 11:45:02 - __main__] - INFO - Entraînement terminé !
+[2025-12-03 11:45:02 - __main__] - INFO - Durée: 0:11:42.888181 secondes
+[2025-12-03 12:05:08 - __main__] - INFO - *** Feature importance ***
+[2025-12-03 12:11:08 - __main__] - INFO - *** Évaluation du modèle ***
+[2025-12-03 12:11:32 - __main__] - INFO - *** Évaluation du modèle ***
+[2025-12-03 12:11:43 - __main__] - INFO - *** Évaluation du modèle ***
+[2025-12-03 12:17:25 - __main__] - INFO - *** Calcul des métriques ***
+[2025-12-03 12:18:50 - __main__] - INFO - Métriques calculées !
+[2025-12-03 12:18:50 - __main__] - INFO - Accuracy: 99.68%
+[2025-12-03 12:18:50 - __main__] - INFO - Precision: 99.68%
+[2025-12-03 12:18:50 - __main__] - INFO - Recall: 99.68%
+[2025-12-03 12:18:50 - __main__] - INFO - F1-Score: 99.66%
+[2025-12-03 12:18:50 - __main__] - INFO - AUC-ROC: 97.57%
+[2025-12-03 12:18:50 - __main__] - INFO - AUC-PR: 88.95%
+[2025-12-03 12:25:45 - __main__] - INFO - *** Sauvegarde du modèle ***
+[2025-12-03 12:25:51 - __main__] - INFO - --- Modèle sauvegardé dans: ../data/models/random_forest_fraud_detector
+[2025-12-03 12:25:54 - __main__] - INFO - --- Métadonnées sauvegardées ---

@@ -11,6 +11,10 @@ from pyspark.sql.functions import col, when, log10, hour, dayofweek, to_timestam
 from pyspark.ml.classification import RandomForestClassificationModel
 from pyspark.ml.feature import VectorAssembler
 from src.utils.logger import setup_logger
+from dotenv import load_dotenv
+
+# Charger les variables d'environnement
+load_dotenv()
 
 # Ajouter le path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
@@ -22,7 +26,8 @@ logger = setup_logger(__name__)
 python_path = sys.executable
 os.environ["PYSPARK_PYTHON"] = os.getenv('PYSPARK_PYTHON', python_path)
 os.environ["PYSPARK_DRIVER_PYTHON"] = os.getenv('PYSPARK_PYTHON', python_path)
-os.environ["JAVA_HOME"] = r"C:\Program Files\Eclipse Adoptium\jdk-21.0.6.7-hotspot" # Java 17 compatible pour spark 3.5.x
+os.environ["JAVA_HOME"] = os.getenv('JAVA_HOME')
+#os.environ["JAVA_HOME"] = r"C:\Program Files\Eclipse Adoptium\jdk-21.0.6.7-hotspot" # Java 17 compatible pour spark 3.5.x
 
 # Configurer HADOOP_HOME pour Windows si défini dans .env
 hadoop_home = os.getenv('HADOOP_HOME')
@@ -47,7 +52,7 @@ def create_simple_spark():
 
 def create_test_data(spark):
     """Crée des données de test"""
-    print("📊 Création de données de test...")
+    print("* Création de données de test...")
     
     data = [
         ("TXN001", "USER1", 150.00, "2024-12-03 14:30:00", "MERCH1", "grocery", 48.8566, 2.3522, False, 0),
@@ -61,13 +66,13 @@ def create_test_data(spark):
                "merchant_category", "location_lat", "location_lon", "is_online", "is_fraud"]
     
     df = spark.createDataFrame(data, columns)
-    print(f"✅ {df.count()} transactions créées")
+    print(f"*** {df.count()} transactions créées")
     return df
 
 
 def create_features(df):
     """Crée les features (même logique que le détecteur)"""
-    print("🔧 Création des features...")
+    print("* Création des features...")
     
     df = df.withColumn("timestamp", to_timestamp(col("timestamp")))
     
@@ -90,13 +95,13 @@ def create_features(df):
     # Features online/offline
     df = df.withColumn("is_online_int", when(col("is_online") == True, 1).otherwise(0))
     
-    print("✅ Features créées")
+    print("*** Features créées")
     return df
 
 
 def apply_model(df, model_path):
     """Applique le modèle ML"""
-    print("🤖 Application du modèle...")
+    print("* Application du modèle...")
     
     feature_columns = [
         'amount', 'amount_log', 'hour_of_day', 'day_of_week',
@@ -107,9 +112,9 @@ def apply_model(df, model_path):
     
     try:
         # Charger le modèle
-        print(f"📥 Chargement du modèle: {model_path}")
+        print(f"* Chargement du modèle: {model_path}")
         model = RandomForestClassificationModel.load(model_path)
-        print("✅ Modèle chargé")
+        print("*** Modèle chargé")
         
         # Assembler les features
         assembler = VectorAssembler(inputCols=feature_columns, outputCol="features")
@@ -141,28 +146,28 @@ def apply_model(df, model_path):
             .otherwise("SAFE")
         )
         
-        print("✅ Prédictions calculées")
+        print("*** Prédictions calculées")
         return predictions
         
     except Exception as e:
-        print(f"❌ Erreur: {e}")
+        print(f"!!! Erreur: {e}")
         raise
 
 
 def main():
     print("="*60)
-    print("🧪 TEST DU MODELE ML (SANS KAFKA)")
+    print("* TEST DU MODELE ML (SANS KAFKA)")
     print("="*60)
     
     # Créer Spark
     spark = create_simple_spark()
-    print(f"✅ Spark {spark.version} démarré\n")
+    print(f"*** Spark {spark.version} démarré\n")
     
     # Chemin du modèle
     model_path = "./data/models/random_forest_fraud_detector"
     
     if not Path(model_path).exists():
-        print(f"❌ Modèle introuvable: {model_path}")
+        print(f"!!! Modèle introuvable: {model_path}")
         print("Assurez-vous d'avoir entraîné le modèle d'abord.")
         return
     
@@ -177,7 +182,7 @@ def main():
     
     # Afficher résultats
     print("\n" + "="*60)
-    print("📊 RÉSULTATS DES PRÉDICTIONS")
+    print("* RÉSULTATS DES PRÉDICTIONS")
     print("="*60)
     
     predictions.select(
@@ -192,7 +197,7 @@ def main():
     ).show(truncate=False)
     
     # Statistiques
-    print("\n📈 STATISTIQUES:")
+    print("\n* STATISTIQUES:")
     total = predictions.count()
     frauds_detected = predictions.filter(col("predicted_fraud") == 1.0).count()
     actual_frauds = predictions.filter(col("is_fraud") == 1).count()
@@ -207,7 +212,7 @@ def main():
     tn = predictions.filter((col("is_fraud") == 0) & (col("predicted_fraud") == 0.0)).count()
     fn = predictions.filter((col("is_fraud") == 1) & (col("predicted_fraud") == 0.0)).count()
     
-    print("\n🎯 MATRICE DE CONFUSION:")
+    print("\n* MATRICE DE CONFUSION:")
     print(f"  True Positives:  {tp}")
     print(f"  False Positives: {fp}")
     print(f"  True Negatives:  {tn}")
@@ -221,7 +226,7 @@ def main():
         recall = tp / (tp + fn)
         print(f"  Rappel: {recall:.2%}")
     
-    print("\n✅ Test terminé avec succès!")
+    print("\n*** Test terminé avec succès!")
     spark.stop()
 
 if __name__ == "__main__":

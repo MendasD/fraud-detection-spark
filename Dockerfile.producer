@@ -1,0 +1,32 @@
+# Dockerfile.producer
+FROM python:3.10-slim
+
+WORKDIR /app
+
+# Installer les dépendances système
+RUN apt-get update && apt-get install -y \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copier les requirements
+COPY requirements.txt .
+
+# Installer uniquement les dépendances nécessaires pour le producteur
+RUN pip install --no-cache-dir \
+    kafka-python==2.0.2 \
+    python-dotenv==1.0.0
+
+# Copier le code source
+COPY src/producers/ /app/src/producers/
+COPY src/models/ /app/src/models/
+COPY src/utils/logger.py /app/src/utils/logger.py
+
+# Variables d'environnement par défaut
+ENV KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+ENV KAFKA_TOPIC=transactions
+ENV TRANSACTION_RATE=2
+ENV FRAUD_RATE=0.02
+ENV PYTHONUNBUFFERED=1
+
+# Commande de démarrage
+CMD ["python", "-u", "/app/src/producers/transaction_generator.py"]

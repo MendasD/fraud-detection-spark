@@ -22,14 +22,16 @@ from pathlib import Path
 
 # Ajuster le path pour les imports
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
-from src.utils.logger import setup_logger
+#from src.utils.logger import setup_logger
 # Charger les variables d'environnement
 load_dotenv()
 
 # logging.basicConfig(level=logging.INFO)
 # logger = logging.getLogger(__name__)
 
-logger = setup_logger(__name__)
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+#logger = setup_logger(__name__)
 
 # chemin python de l'environnement virtuel
 python_path = sys.executable

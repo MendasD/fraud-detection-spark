@@ -7,6 +7,7 @@ les fraudes grâce au modèle ML préentraîné.
 import os
 import sys
 from pathlib import Path
+import logging
 from pyspark.sql.functions import col, when, lit
 from pyspark.ml.classification import RandomForestClassificationModel
 from pyspark.ml.feature import VectorAssembler
@@ -26,7 +27,9 @@ from src.utils.logger import setup_logger
 from dotenv import load_dotenv
 
 load_dotenv()
-logger = setup_logger(__name__)
+#logger = setup_logger(__name__)
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 class MlFraudDetector:

@@ -9,7 +9,7 @@ WORKDIR /app
 # Installer les dépendances système
 RUN apt-get update && apt-get install -y \
     gcc \
-    python3-pip netcat-openbsd && \
+    python3-pip \
     && rm -rf /var/lib/apt/lists/*
 
 # Installer Java et dépendances

@@ -8,18 +8,21 @@ import sys
 from dotenv import load_dotenv
 import threading
 import time
+import logging
 import sys
 from pathlib import Path
 from waitress import serve
 
 # Ajuster le path pour les imports
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
-from src.utils.logger import setup_logger
+#from src.utils.logger import setup_logger
 
 # Charger les variables d'environnement
 load_dotenv()
 
-logger = setup_logger(__name__)
+#logger = setup_logger(__name__)
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 python_path = sys.executable
 os.environ["PYSPARK_PYTHON"] = os.getenv('PYSPARK_PYTHON', python_path)

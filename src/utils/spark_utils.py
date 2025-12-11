@@ -19,7 +19,11 @@ logger = setup_logger(__name__)
 python_path = sys.executable
 os.environ["PYSPARK_PYTHON"] = os.getenv('PYSPARK_PYTHON', python_path)
 os.environ["PYSPARK_DRIVER_PYTHON"] = os.getenv('PYSPARK_PYTHON', python_path)
-os.environ["JAVA_HOME"] = os.getenv('JAVA_HOME') # Java 21 compatible pour spark 3.5.x
+java_home = os.getenv('JAVA_HOME') # Java 21 compatible pour spark 3.5.x
+if java_home:
+    os.environ["JAVA_HOME"] = java_home
+else:
+    pass # on laisse java du conteneur
 
 # Configurer HADOOP_HOME pour Windows si défini dans .env
 hadoop_home = os.getenv('HADOOP_HOME')

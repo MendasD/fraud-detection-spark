@@ -1,0 +1,70 @@
+services:
+  # Zookeeper
+  - type: pserv
+    name: zookeeper
+    env: docker
+    dockerfilePath: ./Dockerfile.zookeeper
+    dockerContext: .
+    envVars:
+      - key: ZOOKEEPER_CLIENT_PORT
+        value: 2181
+      - key: ZOOKEEPER_TICK_TIME
+        value: 2000
+
+  # Kafka
+  - type: pserv
+    name: kafka
+    env: docker
+    dockerfilePath: ./Dockerfile.kafka
+    dockerContext: .
+    envVars:
+      - key: KAFKA_ZOOKEEPER_CONNECT
+        value: zookeeper:2181
+      - key: KAFKA_ADVERTISED_LISTENERS
+        value: PLAINTEXT://kafka:29092
+      - key: KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR
+        value: 1
+      - key: KAFKA_AUTO_CREATE_TOPICS_ENABLE
+        value: true
+
+  # Producer
+  - type: pserv
+    name: fraud-producer
+    env: docker
+    dockerfilePath: ./Dockerfile.producer
+    dockerContext: .
+    envVars:
+      - key: KAFKA_BOOTSTRAP_SERVERS
+        value: kafka:29092
+      - key: KAFKA_TOPIC
+        value: transactions
+      - key: TRANSACTION_RATE
+        value: 2
+      - key: FRAUD_RATE
+        value: 0.02
+
+  # Detector
+  - type: pserv
+    name: fraud-detector
+    env: docker
+    dockerfilePath: ./Dockerfile.detector
+    dockerContext: .
+    envVars:
+      - key: KAFKA_BOOTSTRAP_SERVERS
+        value: kafka:29092
+      - key: KAFKA_TOPIC
+        value: transactions
+      - key: SPARK_MASTER
+        value: local[*]
+
+  # Dashboard (Web Service)
+  - type: web
+    name: fraud-dashboard
+    env: docker
+    dockerfilePath: ./Dockerfile.dashboard
+    dockerContext: .
+    envVars:
+      - key: DASHBOARD_PORT
+        value: 8050
+      - key: SPARK_MASTER
+        value: local[*]

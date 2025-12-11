@@ -19,6 +19,7 @@ import os
 import sys
 import numpy as np
 import glob
+import requests
 from dotenv import load_dotenv
 from utils.logger import setup_logger
 
@@ -34,7 +35,11 @@ logger = setup_logger(__name__)
 python_path = sys.executable
 os.environ["PYSPARK_PYTHON"] = os.getenv('PYSPARK_PYTHON', python_path)
 os.environ["PYSPARK_DRIVER_PYTHON"] = os.getenv('PYSPARK_PYTHON', python_path)
-os.environ["JAVA_HOME"] = os.getenv('JAVA_HOME')
+java_home = os.getenv('JAVA_HOME') # Java 21 compatible pour spark 3.5.x
+if java_home:
+    os.environ["JAVA_HOME"] = java_home
+else:
+    pass # on laisse java du conteneur
 
 # Configurer HADOOP_HOME pour Windows si défini dans .env
 hadoop_home = os.getenv('HADOOP_HOME')
@@ -48,6 +53,7 @@ if hadoop_home and os.path.exists(hadoop_home):
 
 # Configuration
 UPDATE_INTERVAL = 8000  # 5 secondes
+DETECTOR_API_URL = os.getenv('DETECTOR_API_URL', 'http://detector:5000')
 
 # Couleurs du thème BLANC professionnel
 COLORS = {
@@ -122,6 +128,36 @@ def get_data():
         import traceback
         logger.error(traceback.format_exc())
         return None
+    
+def fetch_data_from_api():
+    """Récupère les données depuis l'API du detector"""
+    try:
+        response = requests.get(f"{DETECTOR_API_URL}/api/fraud-data", timeout=5)
+        if response.status_code == 200:
+            result = response.json()
+            if result['status'] == 'success' and result['data']:
+                df = pd.DataFrame(result['data'])
+                if 'timestamp' in df.columns:
+                    df['timestamp'] = pd.to_datetime(df['timestamp'])
+                print(f"✅ {len(df)} transactions récupérées depuis l'API")
+                return df
+    except Exception as e:
+        print(f"❌ Erreur API: {e}")
+    return None
+
+
+def fetch_stats_from_api():
+    """Récupère les stats depuis l'API"""
+    try:
+        response = requests.get(f"{DETECTOR_API_URL}/api/stats", timeout=5)
+        if response.status_code == 200:
+            result = response.json()
+            if result['status'] == 'success':
+                return result['stats']
+    except Exception as e:
+        print(f"❌ Erreur stats API: {e}")
+    return None
+
 
 # Layout principal
 app.layout = html.Div([
@@ -246,7 +282,8 @@ def create_no_data_message():
     Input('interval-component', 'n_intervals')
 )
 def update_monitoring(n):
-    pdf = get_data()
+    #pdf = get_data()
+    pdf = fetch_data_from_api()
     empty = create_empty_figure()
     
     if pdf is None or len(pdf) == 0:
@@ -402,7 +439,8 @@ def update_monitoring(n):
     Input('interval-component', 'n_intervals')
 )
 def update_performance(n):
-    pdf = get_data()
+    #pdf = get_data()
+    pdf = fetch_data_from_api()
     empty = create_empty_figure()
     
     if pdf is None or len(pdf) == 0:
@@ -506,7 +544,8 @@ def update_performance(n):
     Input('interval-component', 'n_intervals')
 )
 def update_exploration(n):
-    pdf = get_data()
+    #pdf = get_data()
+    pdf = fetch_data_from_api()
     empty = create_empty_figure()
     
     if pdf is None or len(pdf) == 0:

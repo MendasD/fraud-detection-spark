@@ -3,42 +3,53 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-# Installer les dépendances système
+# Installer Java et les outils nécessaires
 RUN apt-get update && apt-get install -y \
     gcc \
     g++ \
-    openjdk-17-jdk \
+    openjdk-21-jdk \
+    procps \
     && rm -rf /var/lib/apt/lists/*
 
 # Définir JAVA_HOME
-ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+ENV JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
+ENV PATH=$PATH:$JAVA_HOME/bin
 
-# Copier les requirements
+# Copier requirements
 COPY requirements.txt .
 
-# Installer les dépendances Python pour le dashboard
+# Installer les dépendances Python
 RUN pip install --no-cache-dir \
     dash==2.14.2 \
     plotly==5.18.0 \
     pandas==2.1.4 \
     pyspark==3.5.3 \
-    python-dotenv==1.0.0
+    python-dotenv==1.0.0 \
+    numpy==1.26.2 \
+    requests==2.31.0
 
 # Copier le code source
-COPY src/dashboard/ /app/src/dashboard/
-COPY src/utils/ /app/src/utils/
+COPY src/ /app/src/
 
-# Créer les répertoires nécessaires
+# Créer les répertoires
 RUN mkdir -p /app/data
 
 # Variables d'environnement
 ENV DASHBOARD_PORT=8050
 ENV DASHBOARD_UPDATE_INTERVAL=5
-ENV SPARK_MASTER=spark://spark-master:7077
+ENV SPARK_MASTER=local[*]
 ENV PYTHONUNBUFFERED=1
+ENV PYSPARK_PYTHON=python3
+ENV PYSPARK_DRIVER_PYTHON=python3
 
 # Exposer le port
 EXPOSE 8050
 
-# Script de démarrage avec attente du détecteur
-CMD sleep 30 && python /app/src/dashboard/app.py
+# Script de démarrage avec attente
+# CMD echo "Waiting 45 seconds for detector to initialize..." && \
+#     sleep 45 && \
+#     echo "Starting dashboard..." && \
+#     python src/dashboard/app.py
+
+# Script de démarrage avec attente du detector
+CMD ["/bin/sh", "-c", "echo 'Waiting 60 seconds for detector API...' && sleep 60 && until curl -f http://detector:5000/health; do echo 'Detector API not ready, waiting...'; sleep 5; done && echo 'Detector API ready! Starting dashboard...' && python src/dashboard/app.py"]

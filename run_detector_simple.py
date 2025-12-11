@@ -6,14 +6,23 @@ Résout les problèmes de chemin Python et SPARK_HOME
 import os
 import sys
 from dotenv import load_dotenv
+import threading
+import time
+from src.utils.logger import setup_logger
 
 # Charger les variables d'environnement
 load_dotenv()
 
+logger = setup_logger(__name__)
+
 python_path = sys.executable
 os.environ["PYSPARK_PYTHON"] = os.getenv('PYSPARK_PYTHON', python_path)
 os.environ["PYSPARK_DRIVER_PYTHON"] = os.getenv('PYSPARK_PYTHON', python_path)
-os.environ["JAVA_HOME"] = os.getenv('JAVA_HOME')
+java_home = os.getenv('JAVA_HOME') # Java 21 compatible pour spark 3.5.x
+if java_home:
+    os.environ["JAVA_HOME"] = java_home
+else:
+    pass # on laisse java du conteneur
 #os.environ["JAVA_HOME"] = r"C:\Program Files\Eclipse Adoptium\jdk-21.0.6.7-hotspot" # Java 17 compatible pour spark 3.5.x
 
 # Configurer HADOOP_HOME pour Windows si défini dans .env
@@ -40,6 +49,13 @@ print()
 # Importer et lancer le détecteur
 from src.streaming.ml_fraud_detector import MlFraudDetector
 
+
+def run_api_server():
+    """Lance le serveur API dans un thread séparé"""
+    from src.utils.api_serveur import run_api_server as start_api
+    print("🌐 Démarrage du serveur API sur port 5000...")
+    start_api()
+
 if __name__ == "__main__":
     import argparse
     
@@ -54,6 +70,14 @@ if __name__ == "__main__":
     print(f"* Mode: {args.mode}")
     print(f"*  Trigger: {args.trigger}")
     print()
+
+    # Lancer l'API dans un thread
+    api_thread = threading.Thread(target=MlFraudDetector.run_api_server, daemon=True)
+    api_thread.start()
+
+    print("=== Attente 5 secondes pour l'API... ===")
+    logger.info("=== Attente 5 secondes pour l'API... ===")
+    time.sleep(5)
     
     try:
         detector = MlFraudDetector()

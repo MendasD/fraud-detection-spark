@@ -1,0 +1,9 @@
+# Dockerfile.zookeeper
+FROM confluentinc/cp-zookeeper:7.5.0
+
+# Variables d'environnement par défaut
+ENV ZOOKEEPER_CLIENT_PORT=2181
+ENV ZOOKEEPER_TICK_TIME=2000
+
+# Exposer le port
+EXPOSE 2181

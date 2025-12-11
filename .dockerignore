@@ -7,6 +7,7 @@ __pycache__/
 sparkEnv/
 venv/
 env/
+.env/
 
 # Data
 data/transactions/

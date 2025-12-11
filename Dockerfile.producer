@@ -8,25 +8,25 @@ RUN apt-get update && apt-get install -y \
     gcc \
     && rm -rf /var/lib/apt/lists/*
 
-# Copier les requirements
+# Copier les fichiers nécessaires
 COPY requirements.txt .
+# RUN pip install -r requirements.txt (si on veut tout installer)
 
-# Installer uniquement les dépendances nécessaires pour le producteur
+# Installer les dépendances Python (seulement celles nécessaires pour le producteur)
 RUN pip install --no-cache-dir \
     kafka-python==2.0.2 \
-    python-dotenv==1.0.0
+    python-dotenv==1.0.0 \
+    Faker==20.1.0 \
+    numpy==1.26.2
 
 # Copier le code source
-COPY src/producers/ /app/src/producers/
-COPY src/models/ /app/src/models/
-COPY src/utils/logger.py /app/src/utils/logger.py
+COPY src/ /app/src/
+COPY run_generator.py /app/
 
-# Variables d'environnement par défaut
+# Variables d'environnement
 ENV KAFKA_BOOTSTRAP_SERVERS=kafka:29092
 ENV KAFKA_TOPIC=transactions
-ENV TRANSACTION_RATE=2
-ENV FRAUD_RATE=0.02
 ENV PYTHONUNBUFFERED=1
 
 # Commande de démarrage
-CMD ["python", "-u", "/app/src/producers/transaction_generator.py"]
+CMD ["python", "-u", "run_generator.py"]

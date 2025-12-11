@@ -1,4 +1,4 @@
-# Fraud Detection with PySpark & Kafka (Big Data Project)
+# Traitement de données massives en temps réel avec Spark
 
 ## Présentation
 

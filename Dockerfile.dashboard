@@ -3,12 +3,13 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-# Installer Java et les outils nécessaires
+# Installer Java et les outils nécessaires (adding: --no-install-recommends curl)
 RUN apt-get update && apt-get install -y \
     gcc \
     g++ \
     openjdk-21-jdk \
     procps \
+    wget \
     && rm -rf /var/lib/apt/lists/*
 
 # Définir JAVA_HOME
@@ -61,5 +62,5 @@ EXPOSE 8050
 #     echo "Starting dashboard..." && \
 #     python src/dashboard/app.py
 
-# Script de démarrage avec attente du detector
-CMD ["/bin/sh", "-c", "echo 'Waiting 60 seconds for detector API...' && sleep 60 && until curl -f http://detector:5000/health; do echo 'Detector API not ready, waiting...'; sleep 5; done && echo 'Detector API ready! Starting dashboard...' && python src/dashboard/app.py"]
+# Script de démarrage avec attente du detector (curl -f http://detector:5000/health)
+CMD ["/bin/sh", "-c", "echo 'Waiting 60 seconds for detector API...' && sleep 60 && until wget -qO- http://detector:5000/health; do echo 'Detector API not ready, waiting...'; sleep 5; done && echo 'Detector API ready! Starting dashboard...' && python src/dashboard/app.py"]

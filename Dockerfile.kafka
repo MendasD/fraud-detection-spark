@@ -1,6 +1,16 @@
 # Dockerfile.kafka
 FROM confluentinc/cp-kafka:7.5.0
 
+# Installer netcat pour tester la connexion
+USER root
+RUN apt-get update && apt-get install -y netcat && rm -rf /var/lib/apt/lists/*
+USER appuser
+
+# Copier le script
+COPY wait-for-zookeeper.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/wait-for-zookeeper.sh
+
+
 # Variables d'environnement par défaut
 ENV KAFKA_BROKER_ID=1
 ENV KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
@@ -14,3 +24,6 @@ ENV KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
 
 # Exposer le port
 EXPOSE 9092
+
+# Point d'entrée avec retry
+ENTRYPOINT ["/usr/local/bin/wait-for-zookeeper.sh"]

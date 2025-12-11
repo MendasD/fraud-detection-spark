@@ -9,8 +9,7 @@ WORKDIR /app
 # Installer les dépendances système
 RUN apt-get update && apt-get install -y \
     gcc \
-    python3-pip \
-    netcat \
+    python3-pip netcat-openbsd && \
     && rm -rf /var/lib/apt/lists/*
 
 # Installer Java et dépendances
@@ -50,6 +49,10 @@ COPY data/models/ /app/data/models/
 # Créer les répertoires nécessaires
 RUN mkdir -p /app/data/checkpoints /app/data/transactions
 
+# Attente de kafka
+COPY wait-for-kafka.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/wait-for-kafka.sh
+
 # Variables d'environnement
 ENV KAFKA_BOOTSTRAP_SERVERS=kafka:29092
 ENV KAFKA_TOPIC=transactions
@@ -63,6 +66,10 @@ EXPOSE 5000
 
 # Commande de démarrage
 #CMD ["python", "-u", "run_detector_simple.py"]
+
+USER 1001
+
+ENTRYPOINT ["/usr/local/bin/wait-for-kafka.sh"]
 
 # Script d'attente et démarrage
 CMD echo "Waiting for Kafka..." && \

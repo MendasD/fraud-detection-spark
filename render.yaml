@@ -26,6 +26,8 @@ services:
         value: 1
       - key: KAFKA_AUTO_CREATE_TOPICS_ENABLE
         value: true
+      - key: KAFKA_LOG_RETENTION_HOURS
+        value: 24  # Limiter la rétention pour économiser de l'espace
 
   # Producer
   - type: pserv
@@ -68,3 +70,5 @@ services:
         value: 8050
       - key: SPARK_MASTER
         value: local[*]
+      - key: DETECTOR_API_URL
+        value: http://detector:5000  #API

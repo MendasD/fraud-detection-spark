@@ -8,6 +8,9 @@ RUN apt-get update && apt-get install -y \
     gcc \
     && rm -rf /var/lib/apt/lists/*
 
+# Installer netcat (new)
+RUN apt-get update && apt-get install -y netcat-openbsd && rm -rf /var/lib/apt/lists/*
+
 # Copier les fichiers nécessaires
 COPY requirements.txt .
 # RUN pip install -r requirements.txt (si on veut tout installer)
@@ -23,10 +26,15 @@ RUN pip install --no-cache-dir \
 COPY src/ /app/src/
 COPY run_generator.py /app/
 
+COPY wait-for-kafka.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/wait-for-kafka.sh
+
 # Variables d'environnement
 ENV KAFKA_BOOTSTRAP_SERVERS=kafka:29092
 ENV KAFKA_TOPIC=transactions
 ENV PYTHONUNBUFFERED=1
 
+# Utiliser le script d'attente
+ENTRYPOINT ["/usr/local/bin/wait-for-kafka.sh"]
 # Commande de démarrage
 CMD ["python", "-u", "run_generator.py"]

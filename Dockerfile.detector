@@ -38,7 +38,8 @@ RUN pip3 install --no-cache-dir \
     pyspark==3.5.3 \
     pandas==2.3.3 \
     flask==3.0.0 \
-    flask-cors==4.0.0
+    flask-cors==4.0.0 \
+    waitress==3.0.2
 
 # Copier le code source
 COPY src/ /app/src/

@@ -1,15 +1,18 @@
 # Dockerfile.kafka
 FROM confluentinc/cp-kafka:7.5.0
 
-# Installer netcat pour tester la connexion
+# Passer en root pour installer les packages
 USER root
-RUN apt-get update && apt-get install -y netcat && rm -rf /var/lib/apt/lists/*
-USER appuser
 
-# Copier le script
+# Alpine Linux utilise apk, pas apt-get
+RUN apk add --no-cache bash netcat-openbsd
+
+# Copier le script de démarrage
 COPY wait-for-zookeeper.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/wait-for-zookeeper.sh
 
+# Revenir à l'utilisateur par défaut
+USER appuser
 
 # Variables d'environnement par défaut
 ENV KAFKA_BROKER_ID=1

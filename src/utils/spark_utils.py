@@ -44,6 +44,9 @@ def create_spark_session(app_name: str = "FraudDetectionML"):
     # Détecter la version de Scala (généralement 2.12 ou 2.13)
     spark_version = "3.5.3"  # Votre version Spark
     scala_version = "2.12"   # Version Scala (ajuster si nécessaire)
+
+    # Configuration Ivy pour eviter les problemes de permission sur Railway
+    ivy_home = os.environ.get('IVY_HOME', '/tmp/.ivy2')
     
     # Packages nécessaires
     packages = [
@@ -63,6 +66,8 @@ def create_spark_session(app_name: str = "FraudDetectionML"):
         .appName(app_name) \
         .master("local[*]") \
         .config("spark.jars.packages", ",".join(packages)) \
+        .config("spark.jars.ivy", ivy_home) \
+        .config("spark.local.dir", "/tmp/spark") \
         .config("spark.sql.streaming.checkpointLocation", f"{checkpoint_path}") \
         .config("spark.sql.shuffle.partitions", "4") \
         .config("spark.driver.memory", "2g") \

@@ -35,7 +35,8 @@ COPY src/ /app/src/
 RUN mkdir -p /app/data
 
 # Créer le dossier logs avec permission
-RUN mkdir -p /app/logs && chmod -R 777 /app/logs
+RUN mkdir -p /app/logs && chmod -R 777 /app/logs && \
+    mkdir -p /tmp/.ivy2 && chmod -R 777 /tmp/.ivy2
 
 # Variables d'environnement
 ENV DASHBOARD_PORT=8050
@@ -45,6 +46,11 @@ ENV PYTHONUNBUFFERED=1
 ENV PYSPARK_PYTHON=python3
 ENV PYSPARK_DRIVER_PYTHON=python3
 ENV DETECTOR_API_URL=http://detector:5000
+
+# Variables d'environnement pour Spark/Ivy
+ENV SPARK_LOCAL_DIRS=/tmp/spark
+ENV IVY_HOME=/tmp/.ivy2
+ENV _JAVA_OPTIONS="-Divy.home=/tmp/.ivy2"
 
 # Exposer le port
 EXPOSE 8050

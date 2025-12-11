@@ -318,7 +318,11 @@ class MlFraudDetector:
             
         finally:
             logger.info(" Arrêt du pipeline")
-            self.spark.stop()
+            try:
+                if hasattr(self, 'spark'):
+                    self.spark.stop()
+            except Exception as e:
+                logger.warning("Erreur arrêt spark ignorée! {e}")
 
 
 if __name__ == "__main__":

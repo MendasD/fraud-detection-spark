@@ -88,8 +88,8 @@ def create_spark_session(app_name: str = "FraudDetectionML"):
         .config("spark.jars.repositories","https://repo1.maven.org/maven2") \
         .config("spark.sql.streaming.checkpointLocation", f"{checkpoint_path}") \
         .config("spark.sql.shuffle.partitions", "4") \
-        .config("spark.driver.memory", "2g") \
-        .config("spark.executor.memory", "2g") \
+        .config("spark.driver.memory", "1g") \
+        .config("spark.executor.memory", "512m") \
         .config("spark.sql.adaptive.enabled", "true") \
         .config("spark.python.worker.timeout", "300") \
         .config("spark.python.worker.reuse", "true") \

@@ -78,6 +78,7 @@ ENV JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
 ENV CHECKPOINTS_DIR=/tmp/checkpoints
 ENV DATA_DIR=/tmp/data
 ENV PYSPARK_SUBMIT_ARGS="--jars /app/jars/*.jar pyspark-shell"
+ENV _JAVA_OPTIONS="-Xmx1g -Xms256m"
 
 # Exposer le port API
 EXPOSE 5000

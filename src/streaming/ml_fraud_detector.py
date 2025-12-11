@@ -50,9 +50,9 @@ class MlFraudDetector:
         self.output_path = os.path.join(self.data_path, 'transactions')
         self.checkpoint_path = os.path.join(self.data_path, 'checkpoints')
         
-        # Créer les dossiers si nécessaire
-        Path(self.output_path).mkdir(parents=True, exist_ok=True)
-        Path(self.checkpoint_path).mkdir(parents=True, exist_ok=True)
+        # Créer les dossiers si nécessaire (A activer en local)
+        #Path(self.output_path).mkdir(parents=True, exist_ok=True)
+        #Path(self.checkpoint_path).mkdir(parents=True, exist_ok=True)
 
         # Chemin du modèle préentraîné
         self.model_path = os.path.join(self.data_path, 'models', 'random_forest_fraud_detector')

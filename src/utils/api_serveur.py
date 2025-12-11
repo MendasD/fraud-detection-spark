@@ -9,13 +9,16 @@ from pyspark.sql import SparkSession
 import logging
 import time
 import threading
-from logger import setup_logger
+import sys
+from pathlib import Path
 
 app = Flask(__name__)
 CORS(app)  # Permettre les requêtes cross-origin
 
-# logger = logging.getLogger(__name__)
-# logging.basicConfig(level=logging.INFO)
+# Ajuster le path pour les imports
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+from src.utils.logger import setup_logger
+
 logger = setup_logger(__name__)
 
 # Session Spark partagée
@@ -26,14 +29,14 @@ def init_spark():
     global spark
     try:
         spark = SparkSession.builder \
-            .appName("FraudDetectionAPI") \
+            .appName("FraudDetectionML") \
             .master("local[*]") \
             .getOrCreate()
         
         spark.sparkContext.setLogLevel("ERROR")
         logger.info("***Spark session initialized")
     except Exception as e:
-        logger.error(f"❌ Error initializing Spark: {e}")
+        logger.error(f"!!! Error initializing Spark: {e}")
 
 @app.route('/health', methods=['GET'])
 def health():
@@ -72,7 +75,7 @@ def get_fraud_data():
         })
         
     except Exception as e:
-        logger.error(f"❌ Error fetching data: {e}")
+        logger.error(f"!!! Error fetching data: {e}")
         return jsonify({
             'status': 'error',
             'error': str(e),
@@ -133,6 +136,10 @@ def get_stats():
             'status': 'error',
             'error': str(e)
         }), 500
+    
+def set_spark_session(spark_session):
+    global spark
+    spark = spark_session
 
 def run_api_server():
     """Lance le serveur API"""

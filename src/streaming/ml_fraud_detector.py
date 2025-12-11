@@ -207,7 +207,6 @@ class MlFraudDetector:
             trigger_interval: Intervalle de traitement
         """
         logger.info(f" Démarrage du pipeline ML - Mode: {mode}")
-        time.sleep(2)  # Laisser l'API démarrer d'abord
         
         try:
             # 1. Lire le stream Kafka

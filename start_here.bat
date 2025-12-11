@@ -153,7 +153,7 @@ echo avant de lancer le dashboard (etape suivante).
 echo.
 pause
 
-start "Terminal 2 - ML Detector" cmd /k "call sparkEnv\Scripts\activate && python run_detector_simple.py --mode parquet --trigger "5 seconds""
+start "Terminal 2 - ML Detector" cmd /k "call sparkEnv\Scripts\activate && python run_detector_simple.py --mode memory --trigger "5 seconds""
 
 echo.
 echo ** Terminal 2 ouvert

@@ -8,6 +8,12 @@ import sys
 from dotenv import load_dotenv
 import threading
 import time
+import sys
+from pathlib import Path
+from waitress import serve
+
+# Ajuster le path pour les imports
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 from src.utils.logger import setup_logger
 
 # Charger les variables d'environnement
@@ -48,13 +54,22 @@ print()
 
 # Importer et lancer le détecteur
 from src.streaming.ml_fraud_detector import MlFraudDetector
+from src.utils.spark_utils import (
+    create_spark_session,
+)
 
 
 def run_api_server():
     """Lance le serveur API dans un thread séparé"""
-    from src.utils.api_serveur import run_api_server as start_api
+    #from src.utils.api_serveur import run_api_server as start_api
+    from src.utils.api_serveur import app, set_spark_session
+    logger.info("Starting session Spark créée pour l'API")
+    spark_session = create_spark_session()
+    logger.info("Session Spark créée pour l'API")
+
+    set_spark_session(spark_session)
     print("🌐 Démarrage du serveur API sur port 5000...")
-    start_api()
+    serve(app, host="0.0.0.0", port=5000, threads=1)
 
 if __name__ == "__main__":
     import argparse
@@ -72,7 +87,7 @@ if __name__ == "__main__":
     print()
 
     # Lancer l'API dans un thread
-    api_thread = threading.Thread(target=MlFraudDetector.run_api_server, daemon=True)
+    api_thread = threading.Thread(target=run_api_server, daemon=True)
     api_thread.start()
 
     print("=== Attente 5 secondes pour l'API... ===")

@@ -186,15 +186,22 @@ def write_to_console(stream, trigger="5 seconds"):
     return query
 
 
-def write_to_memory(stream, table_name="fraud_detection_ml", trigger="5 seconds"):
+def write_to_memory(stream, table_name="fraud_detection_ml", trigger="5 seconds", checkpoint_location=None):
     """
     Écrit le stream en mémoire pour le dashboard.
     """
+
+    # ustiliser /tmp pour Railway
+    if checkpoint_location is None:
+        checkpoint_base = os.environ.get('CHECKPOINTS_DIR', '/tmp/checkpoints')
+        checkpoint_location = f"{checkpoint_base}/{table_name}"
+
     query = stream \
         .writeStream \
         .outputMode("append") \
         .format("memory") \
         .queryName(table_name) \
+        .option("checkpointLocation", checkpoint_location) \
         .trigger(processingTime=trigger) \
         .start()
     

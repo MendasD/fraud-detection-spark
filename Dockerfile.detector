@@ -21,8 +21,8 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Créer dossiers avec permissions
-RUN mkdir -p /app/logs /app/jars /tmp/spark && \
-    chmod -R 777 /app/logs /app/jars /tmp/spark
+RUN mkdir -p /app/logs /app/jars /tmp/spark /tmp/checkpoints /tmp/data && \
+    chmod -R 777 /app/logs /app/jars /tmp/spark /tmp/checkpoints /tmp/data
 
 # Copier et exécuter le script de téléchargement des JARs
 COPY download_jars.sh .
@@ -58,7 +58,7 @@ COPY run_detector_simple.py /app/
 COPY data/models/ /app/data/models/
 
 # Créer les répertoires nécessaires
-RUN mkdir -p /app/data/checkpoints /app/data/transactions
+#RUN mkdir -p /app/data/checkpoints /app/data/transactions
 
 # Attente de kafka
 COPY wait-for-kafka.sh /usr/local/bin/
@@ -74,6 +74,9 @@ ENV PYSPARK_DRIVER_PYTHON=python3
 
 # Variables d'environnement
 ENV SPARK_LOCAL_DIRS=/tmp/spark
+ENV JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
+ENV CHECKPOINTS_DIR=/tmp/checkpoints
+ENV DATA_DIR=/tmp/data
 ENV PYSPARK_SUBMIT_ARGS="--jars /app/jars/*.jar pyspark-shell"
 
 # Exposer le port API

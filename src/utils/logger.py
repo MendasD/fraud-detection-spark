@@ -18,7 +18,7 @@ logging.basicConfig(
     encoding="utf-8"
 )
 
-def setup_logger(name: str) -> logging.Logger:
+def setup_logger0(name: str) -> logging.Logger:
     """
     Configure et retourne un logger avec format standardisé.
     
@@ -62,6 +62,41 @@ def setup_logger(name: str) -> logging.Logger:
     
     return logger
 
+def setup_logger(name='fraud_detection'):
+    """Configurer le logger avec fallback pour Railway"""
+    logger = logging.getLogger(name)
+    logger.setLevel(logging.INFO)
+    # Éviter la duplication des handlers si le logger existe déjà
+    if logger.handlers:
+        return logger
+    
+    # format
+    formatter = logging.Formatter(
+        '[%(asctime)s - %(name)s] - %(levelname)s - %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S'
+    )
+
+    # 1. Console Handler
+    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler.setLevel(logging.INFO)
+    console_handler.setFormatter(formatter)
+    logger.addHandler(console_handler)
+
+    # 2. File handler (avec gestion d'erreur pour Railway)
+    try:
+        log_path = Path(os.getenv('LOG_PATH', './logs/app.log'))
+        log_path.parent.mkdir(parents=True, exist_ok=True)
+
+        file_handler = logging.FileHandler(log_path)
+        file_handler.setLevel(logging.INFO)
+        file_handler.setFormatter(formatter)
+        logger.addHandler(file_handler)
+
+        logger.info(f"Logs sauvegardés dans: {log_path}")
+    except (PermissionError, OSError) as e:
+        logger.error(f"Erreur lors de la configuration du logger: {e}")
+        logger.warning("Utilisation de la console pour les logs")
+    return logger
 
 # Logger global pour les utilitaires
 logger = setup_logger('fraud_detection')

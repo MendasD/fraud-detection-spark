@@ -34,6 +34,9 @@ COPY src/ /app/src/
 # Créer les répertoires
 RUN mkdir -p /app/data
 
+# Créer le dossier logs avec permission
+RUN mkdir -p /app/logs && chmod -R 777 /app/logs
+
 # Variables d'environnement
 ENV DASHBOARD_PORT=8050
 ENV DASHBOARD_UPDATE_INTERVAL=5

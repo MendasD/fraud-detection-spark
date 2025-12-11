@@ -19,6 +19,9 @@ RUN apt-get update && apt-get install -y \
     procps \
     && rm -rf /var/lib/apt/lists/*
 
+# Créer le dossier logs avec permission
+RUN mkdir -p /app/logs && chmod -R 777 /app/logs
+
 # Définir JAVA_HOME
 ENV JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
 ENV PATH="${JAVA_HOME}/bin:${PATH}"

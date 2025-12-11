@@ -54,6 +54,14 @@ def create_spark_session(app_name: str = "FraudDetectionML"):
         f"org.apache.kafka:kafka-clients:3.5.1"
     ]
 
+    jars_path = "/app/jars"
+    jars = [
+        f"{jars_path}/spark-sql-kafka-0-10_2.12-3.5.0.jar",
+        f"{jars_path}/kafka-clients-3.5.0.jar",
+        f"{jars_path}/commons-pool2-2.11.1.jar",
+        f"{jars_path}/spark-token-provider-kafka-0-10_2.12-3.5.0.jar"
+    ]
+
     logger.info(f" Packages Spark: {packages}")
     logger.info(f" Spark Version: {spark_version}")
     logger.info(f" Scala Version: {scala_version}")
@@ -62,10 +70,11 @@ def create_spark_session(app_name: str = "FraudDetectionML"):
     # Chekpoint indicé par le temps
     checkpoint_path = f"./data/checkpoints/fraud_detection_ml_{int(time.time())}"
     
+    # .config("spark.jars.packages", ",".join(packages)) \
     spark = SparkSession.builder \
         .appName(app_name) \
         .master("local[*]") \
-        .config("spark.jars.packages", ",".join(packages)) \
+        .config("spark.jars", ",".join(jars)) \
         .config("spark.jars.ivy", ivy_home) \
         .config("spark.local.dir", "/tmp/spark") \
         .config("spark.sql.streaming.checkpointLocation", f"{checkpoint_path}") \

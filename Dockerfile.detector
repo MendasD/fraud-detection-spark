@@ -19,8 +19,13 @@ RUN apt-get update && apt-get install -y \
     procps \
     && rm -rf /var/lib/apt/lists/*
 
-# Créer le dossier logs avec permission
-RUN mkdir -p /app/logs && chmod -R 777 /app/logs
+# Créer dossiers avec permissions
+RUN mkdir -p /app/logs /app/jars /tmp/spark && \
+    chmod -R 777 /app/logs /app/jars /tmp/spark
+
+# Copier et exécuter le script de téléchargement des JARs
+COPY download_jars.sh .
+RUN chmod +x download_jars.sh && ./download_jars.sh
 
 # Définir JAVA_HOME
 ENV JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
@@ -65,6 +70,10 @@ ENV PYTHONUNBUFFERED=1
 ENV SPARK_MASTER=local[*]
 ENV PYSPARK_PYTHON=python3
 ENV PYSPARK_DRIVER_PYTHON=python3
+
+# Variables d'environnement
+ENV SPARK_LOCAL_DIRS=/tmp/spark
+ENV PYSPARK_SUBMIT_ARGS="--jars /app/jars/*.jar pyspark-shell"
 
 # Exposer le port API
 EXPOSE 5000
